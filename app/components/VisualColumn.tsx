@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useMemo, useRef, useState, Suspense } from "react";
-import { Canvas, useFrame } from "@react-three/fiber";
+import { Canvas, useFrame, useThree } from "@react-three/fiber";
 import { OrbitControls, Stars, Float, useTexture } from "@react-three/drei";
 import * as THREE from "three";
 import { Planet } from "@/lib/data";
@@ -30,6 +30,14 @@ type PlanetLook = {
   flattening: number;
   atmosphereColor: string;
   atmosphereStrength: number;
+};
+
+type AtmosphericLayerLook = {
+  color: RGB;
+  opacity: number;
+  speed: number;
+  bandFrequency: number;
+  threshold: number;
 };
 
 const PLANET_LOOKS: Record<string, PlanetLook> = {
@@ -104,6 +112,44 @@ const PLANET_LOOKS: Record<string, PlanetLook> = {
     flattening: 0.97,
     atmosphereColor: "#477cff",
     atmosphereStrength: 0.5,
+  },
+};
+
+const ATMOSPHERIC_LAYERS: Record<string, AtmosphericLayerLook> = {
+  venus: {
+    color: [255, 228, 174],
+    opacity: 0.24,
+    speed: 0.012,
+    bandFrequency: 16,
+    threshold: 0.56,
+  },
+  jupiter: {
+    color: [244, 231, 208],
+    opacity: 0.15,
+    speed: 0.022,
+    bandFrequency: 28,
+    threshold: 0.61,
+  },
+  saturn: {
+    color: [246, 226, 183],
+    opacity: 0.13,
+    speed: 0.018,
+    bandFrequency: 34,
+    threshold: 0.62,
+  },
+  uranus: {
+    color: [205, 245, 247],
+    opacity: 0.28,
+    speed: 0.011,
+    bandFrequency: 19,
+    threshold: 0.5,
+  },
+  neptune: {
+    color: [190, 220, 255],
+    opacity: 0.22,
+    speed: 0.028,
+    bandFrequency: 24,
+    threshold: 0.57,
   },
 };
 
@@ -375,26 +421,40 @@ function createProceduralMaps(planet: Planet): SurfaceMaps {
 function LocalTextureMaterial({ planet, isGasGiant }: SurfaceMaterialProps) {
   const loadedTexture = useTexture(planet.texture_url);
   const look = PLANET_LOOKS[planet.slug];
-  const texture = useMemo(() => {
-    const preparedTexture = loadedTexture.clone();
-    preparedTexture.colorSpace = THREE.SRGBColorSpace;
-    preparedTexture.wrapS = THREE.RepeatWrapping;
-    preparedTexture.wrapT = THREE.ClampToEdgeWrapping;
-    preparedTexture.minFilter = THREE.LinearMipmapLinearFilter;
-    preparedTexture.magFilter = THREE.LinearFilter;
-    preparedTexture.anisotropy = 12;
-    preparedTexture.generateMipmaps = true;
-    preparedTexture.needsUpdate = true;
-    return preparedTexture;
-  }, [loadedTexture]);
+  const maxAnisotropy = useThree((state) => state.gl.capabilities.getMaxAnisotropy());
+  const maps = useMemo(() => {
+    const prepareTexture = (colorSpace: THREE.ColorSpace) => {
+      const texture = loadedTexture.clone();
+      texture.colorSpace = colorSpace;
+      texture.wrapS = THREE.RepeatWrapping;
+      texture.wrapT = THREE.ClampToEdgeWrapping;
+      texture.minFilter = THREE.LinearMipmapLinearFilter;
+      texture.magFilter = THREE.LinearFilter;
+      texture.anisotropy = Math.min(16, maxAnisotropy);
+      texture.generateMipmaps = true;
+      texture.needsUpdate = true;
+      return texture;
+    };
 
-  useEffect(() => () => texture.dispose(), [texture]);
+    return {
+      colorMap: prepareTexture(THREE.SRGBColorSpace),
+      detailMap: prepareTexture(THREE.NoColorSpace),
+    };
+  }, [loadedTexture, maxAnisotropy]);
+
+  useEffect(
+    () => () => {
+      maps.colorMap.dispose();
+      maps.detailMap.dispose();
+    },
+    [maps],
+  );
 
   return (
     <meshPhysicalMaterial
-      map={texture}
-      bumpMap={texture}
-      roughnessMap={isGasGiant ? undefined : texture}
+      map={maps.colorMap}
+      bumpMap={maps.detailMap}
+      roughnessMap={isGasGiant ? undefined : maps.detailMap}
       bumpScale={look.bumpScale}
       roughness={look.roughness}
       metalness={0}
@@ -487,67 +547,118 @@ function CloudLayer({ flattening }: { flattening: number }) {
   );
 }
 
-function createSaturnRingTexture() {
-  const size = 768;
-  const data = new Uint8Array(size * size * 4);
+function createAtmosphericDetailTexture(planet: Planet, look: AtmosphericLayerLook) {
+  const width = 1024;
+  const height = 512;
+  const data = new Uint8Array(width * height * 4);
+  const seed = planet.slug.split("").reduce((sum, char) => sum + char.charCodeAt(0), 0) + 761;
 
-  for (let y = 0; y < size; y += 1) {
-    for (let x = 0; x < size; x += 1) {
-      const centeredX = x / (size - 1) - 0.5;
-      const centeredY = y / (size - 1) - 0.5;
-      const radius = Math.sqrt(centeredX * centeredX + centeredY * centeredY) * 2;
-      const index = (y * size + x) * 4;
+  for (let y = 0; y < height; y += 1) {
+    const v = y / (height - 1);
 
-      if (radius < 0.535 || radius > 1) {
-        data[index + 3] = 0;
-        continue;
-      }
+    for (let x = 0; x < width; x += 1) {
+      const u = x / (width - 1);
+      const flow = fractalNoise(u, v, seed, 4.2, 0.34);
+      const wisps = fractalNoise(u + (flow - 0.5) * 0.045, v, seed + 83, 6.6, 0.24);
+      const bands = 0.5 + 0.5 * Math.sin(v * Math.PI * look.bandFrequency + (flow - 0.5) * 4.5);
+      const cloudValue = flow * 0.48 + wisps * 0.34 + bands * 0.18;
+      const coverage = remap(cloudValue, look.threshold, look.threshold + 0.19);
+      const brightness = 0.84 + coverage * 0.16;
+      const index = (y * width + x) * 4;
 
-      const fineBands = 0.5 + 0.5 * Math.sin(radius * 920);
-      const mediumBands = 0.5 + 0.5 * Math.sin(radius * 235 + Math.sin(radius * 47));
-      const broadBands = 0.5 + 0.5 * Math.sin(radius * 58);
-      const bandValue = fineBands * 0.18 + mediumBands * 0.34 + broadBands * 0.18 + 0.3;
-      const innerFade = smoothstep(remap(radius, 0.535, 0.565));
-      const outerFade = smoothstep(remap(1 - radius, 0, 0.025));
-      const cassiniGap = 1 - Math.exp(-Math.pow((radius - 0.875) / 0.009, 2)) * 0.94;
-      const enckeGap = 1 - Math.exp(-Math.pow((radius - 0.973) / 0.0035, 2)) * 0.76;
-      const innerRingOpacity = radius < 0.67 ? 0.46 : 1;
-      const alpha = THREE.MathUtils.clamp(
-        (0.38 + bandValue * 0.55) * innerFade * outerFade * cassiniGap * enckeGap * innerRingOpacity,
-        0,
-        1,
-      );
-
-      let color = mixColor([99, 82, 68], [207, 184, 145], bandValue);
-      color = mixColor(color, [239, 218, 178], remap(radius, 0.66, 0.86) * 0.45);
-      color = mixColor(color, [151, 130, 111], remap(radius, 0.88, 1) * 0.28);
-
-      data[index] = color[0];
-      data[index + 1] = color[1];
-      data[index + 2] = color[2];
-      data[index + 3] = Math.round(alpha * 255);
+      data[index] = Math.round(look.color[0] * brightness);
+      data[index + 1] = Math.round(look.color[1] * brightness);
+      data[index + 2] = Math.round(look.color[2] * brightness);
+      data[index + 3] = Math.round(Math.pow(coverage, 1.35) * 165);
     }
   }
 
-  const texture = createDataTexture(data, size, size, THREE.SRGBColorSpace);
-  texture.wrapS = THREE.ClampToEdgeWrapping;
-  return texture;
+  return createDataTexture(data, width, height, THREE.SRGBColorSpace);
+}
+
+function AtmosphericDetailLayer({
+  planet,
+  flattening,
+}: {
+  planet: Planet;
+  flattening: number;
+}) {
+  const layerRef = useRef<THREE.Mesh>(null);
+  const look = ATMOSPHERIC_LAYERS[planet.slug];
+  const texture = useMemo(() => createAtmosphericDetailTexture(planet, look), [look, planet]);
+
+  useEffect(() => () => texture.dispose(), [texture]);
+  useFrame((_, delta) => {
+    if (layerRef.current) {
+      layerRef.current.rotation.y += delta * look.speed;
+    }
+  });
+
+  return (
+    <mesh ref={layerRef} scale={[1.009, flattening * 1.009, 1.009]} renderOrder={2}>
+      <sphereGeometry args={[2.5, 128, 128]} />
+      <meshPhysicalMaterial
+        map={texture}
+        transparent
+        opacity={look.opacity}
+        alphaTest={0.003}
+        depthWrite={false}
+        roughness={0.72}
+        metalness={0}
+        clearcoat={0.08}
+      />
+    </mesh>
+  );
 }
 
 function SaturnRings() {
-  const texture = useMemo(() => createSaturnRingTexture(), []);
+  const loadedTexture = useTexture("/textures/2k_saturn_ring_alpha.png");
+  const maxAnisotropy = useThree((state) => state.gl.capabilities.getMaxAnisotropy());
+  const texture = useMemo(() => {
+    const preparedTexture = loadedTexture.clone();
+    preparedTexture.colorSpace = THREE.SRGBColorSpace;
+    preparedTexture.wrapS = THREE.ClampToEdgeWrapping;
+    preparedTexture.wrapT = THREE.ClampToEdgeWrapping;
+    preparedTexture.minFilter = THREE.LinearMipmapLinearFilter;
+    preparedTexture.magFilter = THREE.LinearFilter;
+    preparedTexture.anisotropy = Math.min(16, maxAnisotropy);
+    preparedTexture.generateMipmaps = true;
+    preparedTexture.needsUpdate = true;
+    return preparedTexture;
+  }, [loadedTexture, maxAnisotropy]);
+  const geometry = useMemo(() => {
+    const innerRadius = 3;
+    const outerRadius = 5.6;
+    const ringGeometry = new THREE.RingGeometry(innerRadius, outerRadius, 512, 1);
+    const positions = ringGeometry.attributes.position;
+    const uvs = ringGeometry.attributes.uv;
 
-  useEffect(() => () => texture.dispose(), [texture]);
+    for (let index = 0; index < positions.count; index += 1) {
+      const radius = Math.hypot(positions.getX(index), positions.getY(index));
+      const radialUv = (radius - innerRadius) / (outerRadius - innerRadius);
+      uvs.setXY(index, radialUv, 0.5);
+    }
+
+    uvs.needsUpdate = true;
+    return ringGeometry;
+  }, []);
+
+  useEffect(
+    () => () => {
+      texture.dispose();
+      geometry.dispose();
+    },
+    [geometry, texture],
+  );
 
   return (
     <mesh rotation={[Math.PI / 2.65, 0, 0]} renderOrder={1}>
-      <ringGeometry args={[3, 5.6, 256]} />
+      <primitive attach="geometry" object={geometry} />
       <meshPhysicalMaterial
         map={texture}
-        alphaMap={texture}
         side={THREE.DoubleSide}
         transparent
-        alphaTest={0.018}
+        alphaTest={0.01}
         depthWrite={false}
         roughness={0.88}
         metalness={0}
@@ -631,6 +742,9 @@ function PlanetSphere({ planet }: { planet: Planet }) {
       </mesh>
 
       {planet.slug === "earth" && <CloudLayer flattening={look.flattening} />}
+      {ATMOSPHERIC_LAYERS[planet.slug] && (
+        <AtmosphericDetailLayer planet={planet} flattening={look.flattening} />
+      )}
       {planet.slug === "saturn" && <SaturnRings />}
       <Atmosphere look={look} />
     </Float>

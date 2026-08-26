@@ -32,7 +32,7 @@ export const planets: Planet[] = [
     moons: 0,
     temperature: "-173°C to 427°C",
     color: "#8c8c8c",
-    texture_url: "",
+    texture_url: "/textures/4k_mercury.jpg",
   },
   {
     id: "2",
@@ -49,7 +49,7 @@ export const planets: Planet[] = [
     moons: 0,
     temperature: "462°C",
     color: "#e3bb76",
-    texture_url: "",
+    texture_url: "/textures/2k_venus_atmosphere.jpg",
   },
   {
     id: "3",
@@ -83,7 +83,7 @@ export const planets: Planet[] = [
     moons: 2,
     temperature: "-153°C to 20°C",
     color: "#c1440e",
-    texture_url: "",
+    texture_url: "/textures/4k_mars.jpg",
   },
   {
     id: "5",
@@ -100,7 +100,7 @@ export const planets: Planet[] = [
     moons: 95,
     temperature: "-110°C",
     color: "#d39c7e",
-    texture_url: "",
+    texture_url: "/textures/4k_jupiter.jpg",
   },
   {
     id: "6",
@@ -117,7 +117,7 @@ export const planets: Planet[] = [
     moons: 146,
     temperature: "-140°C",
     color: "#ead6b8",
-    texture_url: "",
+    texture_url: "/textures/4k_saturn.jpg",
   },
   {
     id: "7",
@@ -134,7 +134,7 @@ export const planets: Planet[] = [
     moons: 27,
     temperature: "-195°C",
     color: "#4b70dd",
-    texture_url: "",
+    texture_url: "/textures/2k_uranus.jpg",
   },
   {
     id: "8",
@@ -151,6 +151,6 @@ export const planets: Planet[] = [
     moons: 14,
     temperature: "-200°C",
     color: "#274687",
-    texture_url: "",
+    texture_url: "/textures/2k_neptune.jpg",
   }
 ];
