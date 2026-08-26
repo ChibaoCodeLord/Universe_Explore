@@ -1,26 +1,343 @@
 @import "tailwindcss";
 
+@theme {
+  --font-sans: var(--font-quicksand), ui-sans-serif, system-ui, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
+  --font-heading: var(--font-baloo-2), ui-sans-serif, system-ui, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
+}
+
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  --navy-950: #080D30;
+  --navy-900: #0B1440;
+  --navy-800: #0F1750;
+  --navy-700: #141F58;
+  --parchment: #F5EAD2;
+  --parchment-line: #C9AE7E;
+  --ink: #22245A;
+  --cream: #FBF7EC;
+  --gold: #E8A94C;
+  --gold-dark: #C97D3B;
+  --gold-light: #F6D190;
+  --coral: #D9714B;
+  --coral-dark: #A6482A;
+  --violet: #9F8FD9;
+  --sage: #8FB6B0;
+  --blush: #D98E92;
+  --swirl: #DD6A2E;
 }
 
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+* {
+  box-sizing: border-box;
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+html {
+  scroll-behavior: smooth;
 }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  margin: 0;
+  background: var(--navy-900);
+  color: var(--cream);
+  font-family: var(--font-sans);
+  overflow-x: hidden;
+}
+
+h1, h2 {
+  font-family: var(--font-heading);
+  margin: 0;
+}
+
+p {
+  margin: 0;
+}
+
+.eyebrow {
+  font-family: var(--font-sans);
+  font-weight: 700;
+  letter-spacing: .28em;
+  text-transform: uppercase;
+  font-size: .72rem;
+  color: var(--gold-light);
+  margin-bottom: .9rem;
+}
+
+/* grain texture overlay */
+.grain {
+  position: fixed;
+  inset: 0;
+  z-index: 500;
+  pointer-events: none;
+  opacity: .05;
+  mix-blend-mode: overlay;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  background-size: 220px 220px;
+}
+
+/* dot nav */
+.dotnav {
+  position: fixed;
+  right: 1.4rem;
+  top: 50%;
+  transform: translateY(-50%);
+  z-index: 400;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.dotnav button {
+  position: relative;
+  width: 16px;
+  height: 24px;
+  border-radius: 5px;
+  border: 2px solid rgba(251, 247, 236, .35);
+  background: rgba(251, 247, 236, .08);
+  cursor: pointer;
+  padding: 0;
+  transition: all .3s ease;
+}
+
+.dotnav button.active {
+  background: var(--gold);
+  border-color: var(--gold);
+  box-shadow: 0 0 12px rgba(232, 169, 76, .7);
+  transform: scaleY(1.2);
+}
+
+.dotnav button:focus-visible {
+  outline: 2px solid var(--cream);
+  outline-offset: 3px;
+}
+
+.dotlabel {
+  position: absolute;
+  right: 26px;
+  top: 50%;
+  transform: translateY(-50%);
+  white-space: nowrap;
+  font-size: .72rem;
+  letter-spacing: .05em;
+  color: var(--cream);
+  background: rgba(10, 18, 64, .9);
+  padding: 5px 11px;
+  border-radius: 6px;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity .25s ease;
+}
+
+.dotnav button:hover .dotlabel,
+.dotnav button:focus-visible .dotlabel,
+.dotnav button.active .dotlabel {
+  opacity: 1;
+}
+
+@media (max-width: 640px) {
+  .dotnav {
+    display: none;
+  }
+}
+
+/* Framer Motion Stars CSS Classes for reference */
+.star-dot {
+  border-radius: 50%;
+  background: var(--cream);
+  box-shadow: 0 0 6px 1px rgba(251, 247, 236, .6);
+}
+
+.star-sparkle {
+  background: var(--gold-light);
+  clip-path: polygon(50% 0%, 61% 39%, 100% 50%, 61% 61%, 50% 100%, 39% 61%, 0% 50%, 39% 39%);
+}
+
+section.section {
+  position: relative;
+  overflow: hidden;
+  padding: clamp(3rem, 8vw, 6rem) clamp(1.5rem, 6vw, 5rem);
+}
+
+/* ---------- HERO ---------- */
+.hero {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  background: radial-gradient(ellipse at 50% 18%, #182468 0%, #0B1440 68%);
+}
+
+.swirl {
+  position: absolute;
+  top: 6%;
+  left: 50%;
+  width: clamp(160px, 22vw, 260px);
+  transform: translateX(-55%) rotate(-6deg);
+  z-index: 1;
+}
+
+.swirl path {
+  fill: none;
+  stroke: var(--swirl);
+  stroke-width: 9;
+  stroke-linecap: round;
+}
+
+.hero-content {
+  position: relative;
+  z-index: 2;
+  max-width: 780px;
+}
+
+.wordmark {
+  font-weight: 800;
+  color: var(--cream);
+  font-size: clamp(3.6rem, 13vw, 8.5rem);
+  line-height: .95;
+  letter-spacing: -.01em;
+}
+
+.tagline {
+  font-size: clamp(1rem, 2.2vw, 1.3rem);
+  color: rgba(251, 247, 236, .85);
+  margin-top: 1.1rem;
+  font-weight: 500;
+}
+
+.scrollcue {
+  position: absolute;
+  bottom: 1.8rem;
+  left: 50%;
+  transform: translateX(-50%);
+  font-size: .72rem;
+  letter-spacing: .2em;
+  text-transform: uppercase;
+  color: rgba(251, 247, 236, .6);
+  z-index: 2;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+}
+
+.scrollcue .arrow {
+  animation: bob 1.8s ease-in-out infinite;
+  font-size: 1rem;
+}
+
+@keyframes bob {
+  0%, 100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(6px);
+  }
+}
+
+/* ---------- MOODS ---------- */
+.moods {
+  background: var(--navy-800);
+  text-align: center;
+}
+
+.moods h2 {
+  font-size: clamp(2rem, 5vw, 3rem);
+  color: var(--cream);
+}
+
+.card.parchment {
+  background: var(--parchment);
+  border: 2px dashed var(--parchment-line);
+  border-radius: 22px;
+  padding: 1.8rem 2.1rem;
+  color: var(--ink);
+  max-width: 460px;
+  box-shadow: 0 14px 30px rgba(0, 0, 0, .28);
+  font-size: .98rem;
+  line-height: 1.65;
+  font-weight: 500;
+}
+
+.tilt-left {
+  transform: rotate(-1.6deg);
+}
+
+.tilt-right {
+  transform: rotate(1.6deg);
+}
+
+.center-card {
+  margin: 0 auto;
+}
+
+/* ---------- SPLIT SECTIONS ---------- */
+.imperfection {
+  background: var(--navy-900);
+}
+
+.rockets {
+  background: var(--navy-700);
+}
+
+.split {
+  display: flex;
+  align-items: center;
+  gap: clamp(2rem, 6vw, 5rem);
+  max-width: 1100px;
+  margin: 0 auto;
+}
+
+.split.reverse {
+  flex-direction: row-reverse;
+}
+
+.split .art, .split .copy {
+  flex: 1 1 0;
+  min-width: 280px;
+}
+
+.split .art {
+  display: flex;
+  justify-content: center;
+}
+
+@media (max-width: 760px) {
+  .split, .split.reverse {
+    flex-direction: column;
+  }
+}
+
+.split h2 {
+  font-size: clamp(1.9rem, 4.4vw, 2.7rem);
+  color: var(--cream);
+  margin-bottom: 1.4rem;
+}
+
+/* ---------- TEXTURES / CLOSING ---------- */
+.textures {
+  background: radial-gradient(ellipse at 50% 55%, #17205C, #0A1240 75%);
+  text-align: center;
+}
+
+.textures h2 {
+  font-size: clamp(2rem, 5vw, 3rem);
+  color: var(--cream);
+  margin-bottom: 2rem;
+}
+
+.closing {
+  max-width: 600px;
+  margin: 0 auto;
+  color: rgba(251, 247, 236, .85);
+  font-size: 1.02rem;
+  line-height: 1.7;
+  font-weight: 500;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .scrollcue .arrow {
+    animation: none !important;
+  }
+  html {
+    scroll-behavior: auto;
+  }
 }
