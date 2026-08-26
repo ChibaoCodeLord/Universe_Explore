@@ -38,13 +38,16 @@ export default function ExplorePage() {
   }, []);
 
   return (
-    <div className="min-h-screen bg-[var(--navy-900)] text-[var(--cream)] py-20 px-6 relative overflow-hidden font-[var(--font-quicksand)]">
-      <div className="grain"></div>
+    <div 
+      className="min-h-screen text-[var(--cream)] py-20 px-6 relative overflow-hidden font-[var(--font-comic-neue)]"
+      style={{ backgroundImage: "url('/assets/bg.jpg')", backgroundSize: "cover", backgroundPosition: "center", backgroundAttachment: "fixed" }}
+    >
+      <div className="absolute inset-0 bg-black/30 pointer-events-none"></div>
       <div className="stars-explore absolute inset-0 pointer-events-none" data-count="100"></div>
       
       {/* Navbar (Simplified for subpages) */}
       <nav className="absolute top-0 left-0 w-full p-6 flex justify-between items-center z-50">
-        <Link href="/" className="text-2xl font-[var(--font-baloo-2)] font-extrabold text-[var(--gold)] tracking-wider">UNIVERSE</Link>
+        <Link href="/" className="text-2xl font-[var(--font-chewy)] text-white drop-shadow-[0_2px_4px_rgba(0,0,0,0.5)] tracking-widest">UNIVERSE</Link>
         <ul className="flex space-x-8 text-sm font-semibold tracking-wider text-[var(--cream)] opacity-80">
           <li><Link href="/" className="hover:opacity-100 transition-opacity">Home</Link></li>
           <li><Link href="/explore" className="opacity-100 font-bold border-b-2 border-[var(--gold)]">Explore</Link></li>
@@ -58,8 +61,8 @@ export default function ExplorePage() {
           transition={{ duration: 0.8 }}
           className="text-center mb-16"
         >
-          <p className="eyebrow mx-auto">✳ Discover the solar system ✳</p>
-          <h1 className="text-5xl md:text-6xl font-extrabold mb-4 font-[var(--font-baloo-2)]">
+          <p className="eyebrow mx-auto text-white/70">✳ Discover the solar system ✳</p>
+          <h1 className="text-5xl md:text-6xl font-extrabold mb-4 font-[var(--font-chewy)] drop-shadow-[0_4px_4px_rgba(0,0,0,0.5)]">
             Explore the Universe
           </h1>
           <p className="text-[var(--cream)] opacity-80 max-w-2xl mx-auto text-lg">
@@ -75,22 +78,30 @@ export default function ExplorePage() {
               animate={{ opacity: 1, scale: 1 }}
               transition={{ delay: index * 0.1, duration: 0.5 }}
               whileHover={{ y: -5 }}
-              className="bg-[var(--parchment)] border-2 border-dashed border-[var(--parchment-line)] rounded-2xl overflow-hidden shadow-[0_14px_30px_rgba(0,0,0,0.28)] flex flex-col text-[var(--ink)]"
+              className="bg-[var(--navy-900)]/40 backdrop-blur-md border border-white/10 rounded-3xl overflow-hidden shadow-[0_14px_30px_rgba(0,0,0,0.5)] flex flex-col text-[var(--cream)]"
             >
-              <div className="h-48 relative overflow-hidden flex items-center justify-center p-4 bg-black border-b-2 border-dashed border-[var(--parchment-line)] mix-blend-screen">
+              <div className="h-48 relative overflow-visible flex items-center justify-center p-4 pt-8">
                 {/* eslint-disable-next-line @next/next/no-img-element */}
                 <img 
                   src={planet.image_url} 
                   alt={planet.name} 
-                  className="max-h-full object-contain rounded-full shadow-[0_0_20px_rgba(255,255,255,0.1)] transition-transform duration-500 hover:scale-110"
+                  className="max-h-full object-contain drop-shadow-[0_0_20px_rgba(255,255,255,0.1)] transition-transform duration-500 hover:scale-110"
+                  style={{
+                    mixBlendMode: "screen",
+                    ...(planet.image_url.endsWith('.jpg') ? {
+                      maskImage: "radial-gradient(circle closest-side, black 95%, transparent 100%)",
+                      WebkitMaskImage: "radial-gradient(circle closest-side, black 95%, transparent 100%)",
+                      filter: "contrast(1.2) brightness(0.9)"
+                    } : {})
+                  }}
                 />
               </div>
               
               <div className="p-6 flex-grow flex flex-col">
-                <h2 className="text-2xl font-bold mb-2 font-[var(--font-baloo-2)] text-[var(--coral-dark)]">{planet.name}</h2>
-                <p className="text-sm mb-6 flex-grow font-medium leading-relaxed opacity-90">{planet.short_description}</p>
+                <h2 className="text-3xl mb-2 font-[var(--font-chewy)] text-white">{planet.name}</h2>
+                <p className="text-base mb-6 flex-grow font-medium leading-relaxed opacity-80">{planet.short_description}</p>
                 <Link href={`/object/${planet.slug}`} className="w-full block">
-                  <button className="w-full py-2 bg-transparent hover:bg-[var(--gold)] text-[var(--ink)] border border-[var(--gold-dark)] rounded-full text-sm font-bold tracking-wider transition-colors shadow-sm">
+                  <button className="w-full py-2 bg-transparent hover:bg-white/10 text-white border border-white/30 rounded-full text-sm font-bold tracking-wider transition-colors shadow-sm">
                     LEARN MORE
                   </button>
                 </Link>

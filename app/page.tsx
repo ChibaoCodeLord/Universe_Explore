@@ -237,9 +237,21 @@ export default function Home() {
                   className="mood-chip flex flex-col items-center"
                   whileHover={{ y: -10 }}
                 >
-                  <div className="w-20 h-20 md:w-28 md:h-28 mb-4 relative rounded-full shadow-[0_0_25px_rgba(255,255,255,0.1)] overflow-hidden bg-black border-2 border-[var(--navy-700)] mix-blend-screen">
+                  <div className="w-20 h-20 md:w-28 md:h-28 mb-4 relative overflow-visible">
                     {/* eslint-disable-next-line @next/next/no-img-element */}
-                    <img src={p.image_url} alt={p.name} className="w-full h-full object-contain scale-110" />
+                    <img 
+                      src={p.image_url} 
+                      alt={p.name} 
+                      className="w-full h-full object-contain scale-110 drop-shadow-[0_0_15px_rgba(255,255,255,0.2)]" 
+                      style={{
+                        mixBlendMode: "screen",
+                        ...(p.image_url.endsWith('.jpg') ? {
+                          maskImage: "radial-gradient(circle closest-side, black 95%, transparent 100%)",
+                          WebkitMaskImage: "radial-gradient(circle closest-side, black 95%, transparent 100%)",
+                          filter: "contrast(1.2) brightness(0.9)"
+                        } : {})
+                      }}
+                    />
                   </div>
                   <span className="font-semibold text-[var(--cream)] opacity-90">{p.name}</span>
                 </motion.div>
@@ -261,10 +273,22 @@ export default function Home() {
                 <motion.div 
                   animate={{ rotate: 360 }}
                   transition={{ duration: 60, repeat: Infinity, ease: "linear" }}
-                  className="w-64 h-64 md:w-96 md:h-96 relative rounded-full shadow-[0_0_50px_rgba(230,100,50,0.3)] bg-black overflow-hidden mix-blend-screen"
+                  className="w-64 h-64 md:w-96 md:h-96 relative overflow-visible"
                 >
                   {/* eslint-disable-next-line @next/next/no-img-element */}
-                  <img src={mars.image_url} alt="Mars" className="w-full h-full object-contain scale-105" />
+                  <img 
+                    src={mars.image_url} 
+                    alt="Mars" 
+                    className="w-full h-full object-contain scale-105 drop-shadow-[0_0_30px_rgba(230,100,50,0.4)]" 
+                    style={{
+                      mixBlendMode: "screen",
+                      ...(mars.image_url.endsWith('.jpg') ? {
+                        maskImage: "radial-gradient(circle closest-side, black 95%, transparent 100%)",
+                        WebkitMaskImage: "radial-gradient(circle closest-side, black 95%, transparent 100%)",
+                        filter: "contrast(1.2) brightness(0.9)"
+                      } : {})
+                    }}
+                  />
                 </motion.div>
               )}
             </div>
@@ -297,10 +321,22 @@ export default function Home() {
                 <motion.div 
                   animate={{ y: [0, -20, 0] }}
                   transition={{ duration: 6, repeat: Infinity, ease: "easeInOut" }}
-                  className="w-72 h-72 md:w-[28rem] md:h-[28rem] rounded-full shadow-[0_0_60px_rgba(200,180,150,0.2)] bg-black overflow-hidden relative mix-blend-screen"
+                  className="w-72 h-72 md:w-[28rem] md:h-[28rem] relative overflow-visible"
                 >
                   {/* eslint-disable-next-line @next/next/no-img-element */}
-                  <img src={jupiter.image_url} alt="Jupiter" className="w-full h-full object-contain scale-110" />
+                  <img 
+                    src={jupiter.image_url} 
+                    alt="Jupiter" 
+                    className="w-full h-full object-contain scale-110 drop-shadow-[0_0_40px_rgba(200,180,150,0.3)]" 
+                    style={{
+                      mixBlendMode: "screen",
+                      ...(jupiter.image_url.endsWith('.jpg') ? {
+                        maskImage: "radial-gradient(circle closest-side, black 95%, transparent 100%)",
+                        WebkitMaskImage: "radial-gradient(circle closest-side, black 95%, transparent 100%)",
+                        filter: "contrast(1.2) brightness(0.9)"
+                      } : {})
+                    }}
+                  />
                 </motion.div>
               )}
             </div>
@@ -312,12 +348,24 @@ export default function Home() {
           <p className="eyebrow">Final glow</p>
           <h2>Cosmic textures and light</h2>
           <motion.div 
-            className="w-48 h-48 md:w-72 md:h-72 mx-auto my-12 rounded-full overflow-hidden shadow-[0_0_90px_rgba(150,200,250,0.4)] mix-blend-screen bg-black"
+            className="w-48 h-48 md:w-72 md:h-72 mx-auto my-12 relative overflow-visible"
             animate={{ scale: [1, 1.05, 1] }}
             transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
           >
             {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img src={planets[7]?.image_url} alt="Neptune" className="w-full h-full object-contain scale-105" />
+            <img 
+              src={planets[7]?.image_url} 
+              alt="Neptune" 
+              className="w-full h-full object-contain scale-105 drop-shadow-[0_0_50px_rgba(150,200,250,0.5)]" 
+              style={{
+                mixBlendMode: "screen",
+                ...(planets[7]?.image_url.endsWith('.jpg') ? {
+                  maskImage: "radial-gradient(circle closest-side, black 95%, transparent 100%)",
+                  WebkitMaskImage: "radial-gradient(circle closest-side, black 95%, transparent 100%)",
+                  filter: "contrast(1.2) brightness(0.9)"
+                } : {})
+              }}
+            />
           </motion.div>
           <p className="closing max-w-2xl mx-auto text-lg">
             High-resolution captures from space probes build a sense of depth in every planet, while the real sunlight reflecting off atmospheres blends into a calm, glowing presence.

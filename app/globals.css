@@ -333,6 +333,12 @@ section.section {
   font-weight: 500;
 }
 
+@keyframes float-star {
+  0% { transform: translateY(0) rotate(-10deg); }
+  50% { transform: translateY(-10px) rotate(10deg); }
+  100% { transform: translateY(0) rotate(-10deg); }
+}
+
 @media (prefers-reduced-motion: reduce) {
   .scrollcue .arrow {
     animation: none !important;

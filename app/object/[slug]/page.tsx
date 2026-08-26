@@ -18,12 +18,15 @@ export default async function ObjectDetailPage({ params }: { params: Promise<{ s
   }
 
   return (
-    <div className="min-h-screen bg-[var(--navy-900)] text-[var(--cream)] relative overflow-hidden font-[var(--font-quicksand)]">
-      <div className="grain"></div>
+    <div 
+      className="min-h-screen text-[var(--cream)] relative overflow-hidden font-[var(--font-comic-neue)]"
+      style={{ backgroundImage: "url('/assets/bg.jpg')", backgroundSize: "cover", backgroundPosition: "center", backgroundAttachment: "fixed" }}
+    >
+      <div className="absolute inset-0 bg-black/30 pointer-events-none"></div>
       
       {/* Navbar */}
       <nav className="w-full p-6 flex justify-between items-center z-50 absolute top-0">
-        <Link href="/" className="text-2xl font-[var(--font-baloo-2)] font-extrabold text-[var(--gold)] tracking-wider">UNIVERSE</Link>
+        <Link href="/" className="text-2xl font-[var(--font-chewy)] text-white drop-shadow-[0_2px_4px_rgba(0,0,0,0.5)] tracking-widest">UNIVERSE</Link>
         <ul className="flex space-x-8 text-sm font-semibold tracking-wider text-[var(--cream)] opacity-80">
           <li><Link href="/" className="hover:opacity-100 transition-opacity">Home</Link></li>
           <li><Link href="/explore" className="opacity-100 font-bold border-b-2 border-[var(--gold)]">Explore</Link></li>
@@ -41,21 +44,47 @@ export default async function ObjectDetailPage({ params }: { params: Promise<{ s
 
         <div className="flex flex-col lg:flex-row gap-12 items-start">
           {/* Visual Column */}
-          <div className="w-full lg:w-1/2 flex flex-col items-center">
-            <div className="relative w-full aspect-square max-w-md bg-black rounded-full flex items-center justify-center p-8 shadow-[0_0_50px_rgba(15,23,80,0.8)] mb-8 border border-[var(--navy-800)] mix-blend-screen">
+          <div className="w-full lg:w-1/2 flex flex-col items-center relative">
+            {/* Floating Watercolor Star */}
+            <div 
+              className="absolute -top-10 -left-10 w-24 md:w-32 z-20 mix-blend-screen pointer-events-none"
+              style={{ animation: "float-star 6s ease-in-out infinite" }}
+            >
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img 
+                src="/assets/star.jpg" 
+                alt="Watercolor Star" 
+                className="w-full h-auto object-contain"
+                style={{ 
+                  filter: "contrast(1.4) brightness(0.9)",
+                  maskImage: "radial-gradient(circle at center, black 50%, transparent 75%)",
+                  WebkitMaskImage: "radial-gradient(circle at center, black 50%, transparent 75%)"
+                }}
+              />
+            </div>
+            
+            <div className="relative w-full aspect-square max-w-md flex items-center justify-center p-4 mb-8">
               {/* eslint-disable-next-line @next/next/no-img-element */}
               <img 
                 src={planet.image_url} 
                 alt={planet.name} 
-                className="w-full h-full object-contain rounded-full shadow-[0_0_30px_rgba(0,0,0,0.4)]"
+                className="w-full h-full object-contain drop-shadow-[0_0_30px_rgba(255,255,255,0.2)]"
+                style={{
+                  mixBlendMode: "screen",
+                  ...(planet.image_url.endsWith('.jpg') ? {
+                    maskImage: "radial-gradient(circle closest-side, black 95%, transparent 100%)",
+                    WebkitMaskImage: "radial-gradient(circle closest-side, black 95%, transparent 100%)",
+                    filter: "contrast(1.2) brightness(0.9)"
+                  } : {})
+                }}
               />
             </div>
             
             <div className="flex flex-wrap gap-4 justify-center w-full max-w-md">
-              <button className="px-6 py-3 bg-[var(--gold)] hover:bg-[var(--gold-dark)] text-[var(--navy-950)] text-sm font-bold tracking-wider rounded-full shadow-[0_4px_15px_rgba(232,169,76,0.4)] transition-all flex-1 min-w-[140px]">
+              <button className="px-6 py-3 bg-white hover:bg-gray-200 text-black text-sm font-bold tracking-wider rounded-full shadow-[0_4px_15px_rgba(0,0,0,0.3)] transition-all flex-1 min-w-[140px]">
                 VIEW 3D
               </button>
-              <button className="px-6 py-3 bg-transparent hover:bg-[var(--navy-800)] text-[var(--gold)] hover:text-[var(--gold-light)] text-sm font-bold tracking-wider rounded-full border border-[var(--gold)] transition-all flex-1 min-w-[140px]">
+              <button className="px-6 py-3 bg-transparent hover:bg-white/10 text-white text-sm font-bold tracking-wider rounded-full border border-white/30 transition-all flex-1 min-w-[140px]">
                 COMPARE
               </button>
             </div>
@@ -63,13 +92,13 @@ export default async function ObjectDetailPage({ params }: { params: Promise<{ s
 
           {/* Info Column */}
           <div className="w-full lg:w-1/2">
-            <p className="eyebrow">✳ {planet.short_description} ✳</p>
-            <h1 className="text-5xl md:text-7xl font-extrabold mb-8 font-[var(--font-baloo-2)] text-transparent bg-clip-text bg-gradient-to-r from-[var(--gold-light)] to-[var(--gold-dark)]">
+            <p className="eyebrow text-white/70">✳ {planet.short_description} ✳</p>
+            <h1 className="text-5xl md:text-7xl mb-8 font-[var(--font-chewy)] text-white drop-shadow-[0_4px_4px_rgba(0,0,0,0.5)]">
               {planet.name.toUpperCase()}
             </h1>
             
-            <div className="bg-[var(--parchment)] text-[var(--ink)] border-2 border-dashed border-[var(--parchment-line)] rounded-2xl p-6 mb-8 shadow-[0_14px_30px_rgba(0,0,0,0.28)]">
-              <p className="font-medium leading-relaxed text-[0.98rem]">
+            <div className="bg-[var(--navy-900)]/40 backdrop-blur-md text-white border border-white/10 rounded-3xl p-6 mb-8 shadow-[0_14px_30px_rgba(0,0,0,0.3)]">
+              <p className="font-medium leading-relaxed text-lg opacity-90">
                 {planet.content}
               </p>
             </div>
@@ -92,9 +121,9 @@ export default async function ObjectDetailPage({ params }: { params: Promise<{ s
 
 function StatBox({ label, value }: { label: string; value: string }) {
   return (
-    <div className="bg-[var(--navy-800)] border border-[var(--navy-700)] rounded-xl p-4 flex flex-col shadow-[inset_0_2px_10px_rgba(0,0,0,0.2)]">
-      <span className="text-xs text-[var(--gold-light)] opacity-80 font-bold tracking-widest mb-1">{label}</span>
-      <span className="text-[var(--cream)] font-semibold text-lg">{value}</span>
+    <div className="bg-black/30 backdrop-blur-sm border border-white/10 rounded-2xl p-4 flex flex-col shadow-[inset_0_2px_10px_rgba(0,0,0,0.2)]">
+      <span className="text-xs text-white/60 font-bold tracking-widest mb-1">{label}</span>
+      <span className="text-white font-semibold text-xl">{value}</span>
     </div>
   );
 }
