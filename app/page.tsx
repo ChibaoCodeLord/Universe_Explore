@@ -1,80 +1,179 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useEffect, useState, type ReactNode } from "react";
 import Link from "next/link";
-import { motion } from "framer-motion";
-import { planets } from "@/lib/data";
+import {
+  motion,
+  useReducedMotion,
+  useScroll,
+  useSpring,
+} from "framer-motion";
+import { ArrowUpRight, CircleDot, Sparkles, Wind } from "lucide-react";
+import { planets, type Planet } from "@/lib/data";
 
-// Helper to get random value within a range
-const random = (min: number, max: number) => Math.random() * (max - min) + min;
+type Star = {
+  id: number;
+  size: number;
+  x: number;
+  y: number;
+  duration: number;
+  delay: number;
+  isSparkle: boolean;
+};
+
+type ShootingStar = {
+  id: number;
+  top: number;
+  delay: number;
+  duration: number;
+};
+
+function seededRandom(seed: number) {
+  let state = seed >>> 0;
+
+  return () => {
+    state += 0x6d2b79f5;
+    let value = state;
+    value = Math.imul(value ^ (value >>> 15), value | 1);
+    value ^= value + Math.imul(value ^ (value >>> 7), value | 61);
+    return ((value ^ (value >>> 14)) >>> 0) / 4294967296;
+  };
+}
+
+const randomValue = seededRandom(1986);
+const randomBetween = (min: number, max: number) => randomValue() * (max - min) + min;
+
+const BACKGROUND_STARS: Star[] = Array.from({ length: 150 }, (_, id) => ({
+  id,
+  size: randomValue() < 0.15 ? randomBetween(6, 12) : randomBetween(1, 4),
+  x: randomBetween(0, 100),
+  y: randomBetween(0, 100),
+  duration: randomBetween(3, 7),
+  delay: randomBetween(0, 5),
+  isSparkle: randomValue() < 0.15,
+}));
+
+const SHOOTING_STARS: ShootingStar[] = Array.from({ length: 5 }, (_, id) => ({
+  id,
+  top: randomBetween(0, 50),
+  delay: randomBetween(0, 15),
+  duration: randomBetween(1.5, 3),
+}));
+
+const MOOD_WORLDS = [
+  { slug: "uranus", mood: "Quiet", detail: "A pale-blue world that rolls through space." },
+  { slug: "venus", mood: "Electric", detail: "Golden clouds hiding a volcanic surface." },
+  { slug: "jupiter", mood: "Untamed", detail: "Centuries-old storms moving without rest." },
+  { slug: "neptune", mood: "Dreamy", detail: "Midnight winds at the edge of sunlight." },
+];
+
+function PlanetArtwork({
+  planet,
+  className,
+  alt,
+}: {
+  planet: Planet;
+  className: string;
+  alt?: string;
+}) {
+  const needsMask = planet.image_url.endsWith(".jpg");
+
+  return (
+    // eslint-disable-next-line @next/next/no-img-element
+    <img
+      src={planet.image_url}
+      alt={alt ?? planet.name}
+      className={className}
+      style={{
+        mixBlendMode: "screen",
+        ...(needsMask
+          ? {
+              maskImage: "radial-gradient(circle closest-side, black 93%, transparent 100%)",
+              WebkitMaskImage: "radial-gradient(circle closest-side, black 93%, transparent 100%)",
+              filter: "contrast(1.2) saturate(1.08) brightness(0.92) drop-shadow(0 22px 28px rgba(0, 0, 0, 0.4))",
+            }
+          : {}),
+      }}
+    />
+  );
+}
+
+function Reveal({
+  children,
+  className = "",
+  delay = 0,
+}: {
+  children: ReactNode;
+  className?: string;
+  delay?: number;
+}) {
+  const reduceMotion = useReducedMotion();
+
+  return (
+    <motion.div
+      className={className}
+      initial={reduceMotion ? false : { opacity: 0, y: 54, filter: "blur(12px)" }}
+      whileInView={{ opacity: 1, y: 0, filter: "blur(0px)" }}
+      viewport={{ once: true, amount: 0.2 }}
+      transition={{ duration: 0.9, delay, ease: [0.22, 1, 0.36, 1] }}
+    >
+      {children}
+    </motion.div>
+  );
+}
+
+function SectionNumber({ children }: { children: ReactNode }) {
+  return <span className="section-number" aria-hidden="true">{children}</span>;
+}
 
 export default function Home() {
   const [activeSection, setActiveSection] = useState("hero");
-  const [stars, setStars] = useState<{ id: number; size: number; x: number; y: number; duration: number; delay: number; isSparkle: boolean }[]>([]);
-  const [shootingStars, setShootingStars] = useState<{ id: number; top: number; delay: number; duration: number }[]>([]);
+  const reduceMotion = useReducedMotion();
+  const { scrollYProgress } = useScroll();
+  const smoothProgress = useSpring(scrollYProgress, {
+    stiffness: 110,
+    damping: 26,
+    mass: 0.35,
+  });
 
   useEffect(() => {
-    // Generate stars for React (avoids hydration mismatch by running on mount)
-    const generatedStars = Array.from({ length: 150 }).map((_, i) => ({
-      id: i,
-      size: Math.random() < 0.15 ? random(6, 12) : random(1, 4),
-      x: random(0, 100),
-      y: random(0, 100),
-      duration: random(3, 7),
-      delay: random(0, 5),
-      isSparkle: Math.random() < 0.15,
-    }));
-    setStars(generatedStars);
-
-    // Generate shooting stars
-    const generatedShootingStars = Array.from({ length: 5 }).map((_, i) => ({
-      id: i,
-      top: random(0, 50),
-      delay: random(0, 15),
-      duration: random(1.5, 3)
-    }));
-    setShootingStars(generatedShootingStars);
-  }, []);
-
-  useEffect(() => {
-    // Intersection Observer for dotnav
     const sections = document.querySelectorAll(".section[id]");
-    if ("IntersectionObserver" in window) {
-      const observer = new IntersectionObserver(
-        (entries) => {
-          entries.forEach((entry) => {
-            if (entry.isIntersecting) {
-              setActiveSection(entry.target.id);
-            }
-          });
-        },
-        { threshold: 0.4 }
-      );
-      sections.forEach((s) => observer.observe(s));
-      return () => sections.forEach((s) => observer.unobserve(s));
+
+    if (!("IntersectionObserver" in window)) {
+      return;
     }
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            setActiveSection(entry.target.id);
+          }
+        });
+      },
+      { threshold: 0.4 },
+    );
+
+    sections.forEach((section) => observer.observe(section));
+    return () => observer.disconnect();
   }, []);
 
   const scrollTo = (id: string) => {
-    const target = document.getElementById(id);
-    if (target) {
-      target.scrollIntoView({ behavior: "smooth" });
-    }
+    document.getElementById(id)?.scrollIntoView({ behavior: "smooth" });
   };
 
-  // Get specific planets for the landing page
-  const earth = planets.find((p) => p.slug === "earth");
-  const jupiter = planets.find((p) => p.slug === "jupiter");
-  const mars = planets.find((p) => p.slug === "mars");
-  const saturn = planets.find((p) => p.slug === "saturn");
+  const jupiter = planets.find((planet) => planet.slug === "jupiter");
+  const mars = planets.find((planet) => planet.slug === "mars");
+  const neptune = planets.find((planet) => planet.slug === "neptune");
+  const saturn = planets.find((planet) => planet.slug === "saturn");
 
   return (
     <>
-      <div className="grain z-50 pointer-events-none fixed inset-0 opacity-[0.04]"></div>
+      <div className="grain" />
+      <motion.div className="cosmic-progress" style={{ scaleX: smoothProgress }} />
 
-      {/* Global Stars Background */}
-      <div className="fixed inset-0 pointer-events-none z-0 overflow-hidden">
-        {stars.map((star) => (
+      <div className="fixed inset-0 pointer-events-none z-0 overflow-hidden" aria-hidden="true">
+        {BACKGROUND_STARS.map((star) => (
           <motion.div
             key={star.id}
             className={star.isSparkle ? "star-sparkle" : "star-dot"}
@@ -84,14 +183,12 @@ export default function Home() {
               width: star.size,
               height: star.size,
               position: "absolute",
-              background: star.isSparkle ? "var(--gold-light)" : "var(--cream)",
-              borderRadius: star.isSparkle ? "0" : "50%",
-              clipPath: star.isSparkle ? "polygon(50% 0%, 61% 39%, 100% 50%, 61% 61%, 50% 100%, 39% 61%, 0% 50%, 39% 39%)" : "none",
             }}
-            animate={{
-              opacity: [0.1, 1, 0.1],
-              scale: [0.8, 1.2, 0.8],
-            }}
+            animate={
+              reduceMotion
+                ? undefined
+                : { opacity: [0.1, 1, 0.1], scale: [0.8, 1.2, 0.8] }
+            }
             transition={{
               duration: star.duration,
               repeat: Infinity,
@@ -101,280 +198,380 @@ export default function Home() {
           />
         ))}
 
-        {/* Shooting Stars */}
-        {shootingStars.map((ss) => (
+        {SHOOTING_STARS.map((shootingStar) => (
           <motion.div
-            key={`ss-${ss.id}`}
-            className="absolute h-[2px] w-32 bg-gradient-to-r from-transparent via-white to-white rounded-full z-0 opacity-80"
-            style={{ top: `${ss.top}%`, left: "-20%" }}
-            animate={{ left: "120%", top: `${ss.top + 30}%` }}
-            transition={{ duration: ss.duration, repeat: Infinity, delay: ss.delay, ease: "linear" }}
+            key={`shooting-star-${shootingStar.id}`}
+            className="shooting-star"
+            style={{ top: `${shootingStar.top}%`, left: "-20%" }}
+            animate={
+              reduceMotion
+                ? undefined
+                : { left: "120%", top: `${shootingStar.top + 30}%` }
+            }
+            transition={{
+              duration: shootingStar.duration,
+              repeat: Infinity,
+              delay: shootingStar.delay,
+              ease: "linear",
+            }}
           />
         ))}
 
-        {/* Rocket flying by */}
-        <motion.div
-          className="absolute z-10 w-16 h-16 drop-shadow-[0_0_15px_rgba(255,100,50,0.8)]"
-          initial={{ x: "-10vw", y: "80vh", rotate: 45 }}
-          animate={{ x: "110vw", y: "-20vh" }}
-          transition={{ duration: 12, repeat: Infinity, ease: "linear", delay: 4 }}
-        >
-          <span className="text-5xl block transform rotate-45">🚀</span>
-        </motion.div>
+        {!reduceMotion && (
+          <motion.div
+            className="flying-rocket"
+            initial={{ x: "-10vw", y: "80vh", rotate: 45 }}
+            animate={{ x: "110vw", y: "-20vh" }}
+            transition={{ duration: 14, repeat: Infinity, ease: "linear", delay: 5 }}
+          >
+            🚀
+          </motion.div>
+        )}
       </div>
 
-      <nav className="dotnav z-50" aria-label="Section navigation">
-        <button onClick={() => scrollTo("hero")} className={activeSection === "hero" ? "active" : ""}><span className="dotlabel">Universe</span></button>
-        <button onClick={() => scrollTo("moods")} className={activeSection === "moods" ? "active" : ""}><span className="dotlabel">A planet for every mood</span></button>
-        <button onClick={() => scrollTo("imperfection")} className={activeSection === "imperfection" ? "active" : ""}><span className="dotlabel">The beauty of reality</span></button>
-        <button onClick={() => scrollTo("rockets")} className={activeSection === "rockets" ? "active" : ""}><span className="dotlabel">Giants in flight</span></button>
-        <button onClick={() => scrollTo("textures")} className={activeSection === "textures" ? "active" : ""}><span className="dotlabel">Cosmic textures</span></button>
+      <nav className="dotnav" aria-label="Section navigation">
+        <button onClick={() => scrollTo("hero")} className={activeSection === "hero" ? "active" : ""}>
+          <span className="dotlabel">Universe</span>
+        </button>
+        <button onClick={() => scrollTo("moods")} className={activeSection === "moods" ? "active" : ""}>
+          <span className="dotlabel">Find your orbit</span>
+        </button>
+        <button onClick={() => scrollTo("imperfection")} className={activeSection === "imperfection" ? "active" : ""}>
+          <span className="dotlabel">Beautifully imperfect</span>
+        </button>
+        <button onClick={() => scrollTo("rockets")} className={activeSection === "rockets" ? "active" : ""}>
+          <span className="dotlabel">Inside the storm</span>
+        </button>
+        <button onClick={() => scrollTo("textures")} className={activeSection === "textures" ? "active" : ""}>
+          <span className="dotlabel">Keep looking up</span>
+        </button>
       </nav>
 
       <main className="relative z-10">
-        {/* HERO SECTION */}
-        <section id="hero" className="section hero relative" style={{ backgroundImage: "url('/assets/bg.jpg')", backgroundSize: "cover", backgroundPosition: "center" }}>
-          <div className="absolute inset-0 bg-black/40 z-0"></div>
-          <svg className="swirl absolute top-[-5%] left-[20%] w-64 md:w-96 z-10" viewBox="0 0 260 100" aria-hidden="true">
-            <path d="M10,70 C30,10 90,10 105,45 C120,80 170,85 185,40 C198,0 235,-5 250,25" fill="none" stroke="#E87A3E" strokeWidth="8" strokeLinecap="round" />
+        <section
+          id="hero"
+          className="section hero"
+          style={{
+            backgroundImage: "url('/assets/bg.jpg')",
+            backgroundSize: "cover",
+            backgroundPosition: "center",
+          }}
+        >
+          <div className="absolute inset-0 bg-black/40 z-0" />
+          <svg className="swirl" viewBox="0 0 260 100" aria-hidden="true">
+            <path d="M10,70 C30,10 90,10 105,45 C120,80 170,85 185,40 C198,0 235,-5 250,25" />
           </svg>
 
-          <div className="hero-content relative z-20 mt-10">
-            <motion.p 
-              initial={{ opacity: 0, y: -20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.8 }}
+          <div className="hero-content">
+            <motion.p
+              initial={{ opacity: 0, y: -20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.8 }}
               className="eyebrow"
             >
               ✳ A real space collection ✳
             </motion.p>
-            <motion.h1 
-              initial={{ opacity: 0, scale: 0.9 }} animate={{ opacity: 1, scale: 1 }} transition={{ duration: 1 }}
+            <motion.h1
+              initial={{ opacity: 0, scale: 0.9 }}
+              animate={{ opacity: 1, scale: 1 }}
+              transition={{ duration: 1 }}
               className="wordmark drop-shadow-[0_4px_4px_rgba(0,0,0,0.5)]"
             >
               Universe
             </motion.h1>
-            <motion.p 
-              initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.5, duration: 1 }}
+            <motion.p
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ delay: 0.5, duration: 1 }}
               className="tagline"
             >
               Brings the cosmos to life through delicate watercolor textures
             </motion.p>
-            <motion.div 
-              initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.8, duration: 0.5 }}
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.8, duration: 0.5 }}
               className="mt-10"
             >
-              <Link href="/explore">
-                <button className="px-10 py-4 bg-[var(--gold)] hover:bg-[var(--gold-dark)] text-[var(--navy-950)] text-sm font-bold tracking-wider rounded-full shadow-[0_4px_25px_rgba(232,169,76,0.5)] transition-all transform hover:scale-105">
-                  START EXPLORING
-                </button>
+              <Link href="/explore" className="hero-cta">
+                Start exploring <ArrowUpRight size={17} />
               </Link>
             </motion.div>
           </div>
 
-          {/* Watercolor Star */}
-          <motion.div 
-            className="absolute left-[8%] top-[10%] w-32 md:w-48 z-10 mix-blend-screen"
-            animate={{ y: [0, -15, 0], rotate: [-10, 10, -10] }}
+          <motion.div
+            className="hero-watercolor-star"
+            animate={reduceMotion ? undefined : { y: [0, -15, 0], rotate: [-10, 10, -10] }}
             transition={{ duration: 5, repeat: Infinity, ease: "easeInOut" }}
           >
             {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img 
-              src="/assets/star.jpg" 
-              alt="Watercolor Star" 
+            <img
+              src="/assets/star.jpg"
+              alt="Watercolor star"
               className="w-full h-auto object-contain"
-              style={{ 
+              style={{
                 filter: "contrast(1.4) brightness(0.9)",
                 maskImage: "radial-gradient(circle at center, black 50%, transparent 75%)",
-                WebkitMaskImage: "radial-gradient(circle at center, black 50%, transparent 75%)"
+                WebkitMaskImage: "radial-gradient(circle at center, black 50%, transparent 75%)",
               }}
             />
           </motion.div>
 
-          {/* Realistic Saturn in bottom left */}
           {saturn && (
-            <motion.div 
-              className="absolute left-[-2%] bottom-[0%] w-56 md:w-96 z-10"
-              animate={{ y: [0, -20, 0], rotate: [0, 5, 0] }}
+            <motion.div
+              className="hero-saturn"
+              animate={reduceMotion ? undefined : { y: [0, -20, 0], rotate: [0, 5, 0] }}
               transition={{ duration: 8, repeat: Infinity, ease: "easeInOut" }}
             >
-              {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img src={saturn.image_url} alt={saturn.name} className="w-full h-auto object-contain drop-shadow-[0_10px_20px_rgba(0,0,0,0.5)]" />
+              <PlanetArtwork
+                planet={saturn}
+                className="w-full h-auto object-contain drop-shadow-[0_10px_20px_rgba(0,0,0,0.5)]"
+              />
             </motion.div>
           )}
 
-          {/* Watercolor Rocket */}
-          <motion.div 
-            className="absolute right-[5%] bottom-[5%] w-48 md:w-72 z-10 mix-blend-screen"
-            animate={{ y: [0, 20, 0], rotate: [0, -5, 0] }}
+          <motion.div
+            className="hero-watercolor-rocket"
+            animate={reduceMotion ? undefined : { y: [0, 20, 0], rotate: [0, -5, 0] }}
             transition={{ duration: 6, repeat: Infinity, ease: "easeInOut", delay: 1 }}
           >
             {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img 
-              src="/assets/rocket.jpg" 
-              alt="Watercolor Rocket" 
+            <img
+              src="/assets/rocket.jpg"
+              alt="Watercolor rocket"
               className="w-full h-auto object-contain"
-              style={{ 
+              style={{
                 filter: "contrast(1.4) brightness(0.9)",
                 maskImage: "radial-gradient(ellipse at center, black 55%, transparent 75%)",
-                WebkitMaskImage: "radial-gradient(ellipse at center, black 55%, transparent 75%)"
+                WebkitMaskImage: "radial-gradient(ellipse at center, black 55%, transparent 75%)",
               }}
             />
           </motion.div>
 
-          <div className="scrollcue absolute bottom-8">
-            scroll<span className="arrow mt-2 block">↓</span>
+          <div className="scrollcue">
+            scroll<span className="arrow">↓</span>
+          </div>
+          <div className="hero-bottom-fade" aria-hidden="true" />
+        </section>
+
+        <section id="moods" className="section cosmic-section moods">
+          <SectionNumber>01</SectionNumber>
+          <div className="watercolor-bloom bloom-violet" aria-hidden="true" />
+          <motion.div
+            className="orbit-sketch orbit-sketch-wide"
+            aria-hidden="true"
+            animate={reduceMotion ? undefined : { rotate: 360 }}
+            transition={{ duration: 90, repeat: Infinity, ease: "linear" }}
+          />
+
+          <div className="section-shell">
+            <Reveal className="section-heading section-heading-centered">
+              <p className="eyebrow"><Sparkles size={14} /> Atmospheres</p>
+              <h2>Find a world that feels like you.</h2>
+              <p className="section-lede">
+                Every planet carries a different rhythm—quiet, volatile, colossal, or impossibly far away.
+              </p>
+            </Reveal>
+
+            <div className="mood-orbit-grid">
+              {MOOD_WORLDS.map((mood, index) => {
+                const planet = planets.find((item) => item.slug === mood.slug);
+                if (!planet) return null;
+
+                return (
+                  <motion.div
+                    key={mood.slug}
+                    initial={reduceMotion ? false : { opacity: 0, y: 45, scale: 0.92 }}
+                    whileInView={{ opacity: 1, y: 0, scale: 1 }}
+                    viewport={{ once: true, amount: 0.35 }}
+                    transition={{ duration: 0.7, delay: index * 0.1, ease: [0.22, 1, 0.36, 1] }}
+                    whileHover={reduceMotion ? undefined : { y: -12 }}
+                  >
+                    <Link href={`/object/${planet.slug}`} className="mood-planet-card group">
+                      <span className="mood-card-index">0{index + 1}</span>
+                      <div className="mood-planet-stage">
+                        <span className="planet-orbit-ring" />
+                        <PlanetArtwork
+                          planet={planet}
+                          className="mood-planet-image group-hover:scale-110"
+                        />
+                      </div>
+                      <p className="mood-name">{mood.mood}</p>
+                      <h3>{planet.name}</h3>
+                      <p className="mood-detail">{mood.detail}</p>
+                      <span className="mood-link">Enter orbit <ArrowUpRight size={15} /></span>
+                    </Link>
+                  </motion.div>
+                );
+              })}
+            </div>
+
+            <Reveal className="cosmic-note" delay={0.15}>
+              <CircleDot size={20} />
+              <p>There is no empty space here—only worlds waiting at different frequencies.</p>
+            </Reveal>
           </div>
         </section>
 
-        {/* MOODS SECTION */}
-        <section id="moods" className="section moods">
-          <p className="eyebrow">Atmospheres</p>
-          <h2>A planet for every condition</h2>
-          <div className="mood-row flex flex-wrap justify-center gap-8 md:gap-16 my-12">
-            {[planets[6], planets[1], planets[4], planets[7]].map((p, i) => (
-              p && (
-                <motion.div 
-                  key={p.slug} 
-                  className="mood-chip flex flex-col items-center"
-                  whileHover={{ y: -10 }}
-                >
-                  <div className="w-20 h-20 md:w-28 md:h-28 mb-4 relative overflow-visible">
-                    {/* eslint-disable-next-line @next/next/no-img-element */}
-                    <img 
-                      src={p.image_url} 
-                      alt={p.name} 
-                      className="w-full h-full object-contain scale-110 drop-shadow-[0_0_15px_rgba(255,255,255,0.2)]" 
-                      style={{
-                        mixBlendMode: "screen",
-                        ...(p.image_url.endsWith('.jpg') ? {
-                          maskImage: "radial-gradient(circle closest-side, black 95%, transparent 100%)",
-                          WebkitMaskImage: "radial-gradient(circle closest-side, black 95%, transparent 100%)",
-                          filter: "contrast(1.2) brightness(0.9)"
-                        } : {})
-                      }}
-                    />
-                  </div>
-                  <span className="font-semibold text-[var(--cream)] opacity-90">{p.name}</span>
-                </motion.div>
-              )
-            ))}
-          </div>
-          <div className="card parchment center-card tilt-left">
-            <p>
-              Every world carries its own real atmosphere, from the toxic, thick clouds of Venus to the icy, calm blue rings of Uranus.
-            </p>
-          </div>
-        </section>
-
-        {/* IMPERFECTION (Mars) SECTION */}
-        <section id="imperfection" className="section imperfection">
-          <div className="split">
-            <div className="art w-full md:w-1/2 flex justify-center">
+        <section id="imperfection" className="section cosmic-section imperfection">
+          <SectionNumber>02</SectionNumber>
+          <div className="watercolor-bloom bloom-coral" aria-hidden="true" />
+          <div className="section-shell story-grid">
+            <Reveal className="planet-composition mars-composition">
               {mars && (
-                <motion.div 
-                  animate={{ rotate: 360 }}
-                  transition={{ duration: 60, repeat: Infinity, ease: "linear" }}
-                  className="w-64 h-64 md:w-96 md:h-96 relative overflow-visible"
-                >
-                  {/* eslint-disable-next-line @next/next/no-img-element */}
-                  <img 
-                    src={mars.image_url} 
-                    alt="Mars" 
-                    className="w-full h-full object-contain scale-105 drop-shadow-[0_0_30px_rgba(230,100,50,0.4)]" 
-                    style={{
-                      mixBlendMode: "screen",
-                      ...(mars.image_url.endsWith('.jpg') ? {
-                        maskImage: "radial-gradient(circle closest-side, black 95%, transparent 100%)",
-                        WebkitMaskImage: "radial-gradient(circle closest-side, black 95%, transparent 100%)",
-                        filter: "contrast(1.2) brightness(0.9)"
-                      } : {})
-                    }}
+                <>
+                  <motion.div
+                    className="planet-halo mars-halo"
+                    animate={reduceMotion ? undefined : { scale: [0.96, 1.06, 0.96], opacity: [0.45, 0.8, 0.45] }}
+                    transition={{ duration: 6, repeat: Infinity, ease: "easeInOut" }}
                   />
-                </motion.div>
+                  <motion.div
+                    className="planet-orbit planet-orbit-a"
+                    animate={reduceMotion ? undefined : { rotate: 360 }}
+                    transition={{ duration: 28, repeat: Infinity, ease: "linear" }}
+                  />
+                  <motion.div
+                    className="planet-orbit planet-orbit-b"
+                    animate={reduceMotion ? undefined : { rotate: -360 }}
+                    transition={{ duration: 42, repeat: Infinity, ease: "linear" }}
+                  />
+                  <motion.div
+                    className="story-planet mars-planet"
+                    animate={reduceMotion ? undefined : { rotate: 360 }}
+                    transition={{ duration: 80, repeat: Infinity, ease: "linear" }}
+                  >
+                    <PlanetArtwork planet={mars} className="story-planet-image" />
+                  </motion.div>
+                  <span className="planet-pin pin-top"><i /> Olympus Mons</span>
+                  <span className="planet-pin pin-bottom"><i /> Ancient impact basin</span>
+                </>
               )}
-            </div>
-            <div className="copy w-full md:w-1/2">
-              <p className="eyebrow">Real Details</p>
-              <h2>The beauty of reality</h2>
-              <div className="card parchment tilt-right">
-                <p>
-                  Craters, storms, and icy poles. The real cosmos is far more beautiful and imperfect than any painting. The Mars surface reveals billions of years of history.
-                </p>
+            </Reveal>
+
+            <Reveal className="story-copy" delay={0.12}>
+              <p className="eyebrow"><CircleDot size={14} /> Real details</p>
+              <h2>Beautifully<br />imperfect.</h2>
+              <p className="story-lede">
+                The cosmos was never polished. Its scars are the story: impact craters, dust valleys, frozen caps, and surfaces shaped over billions of years.
+              </p>
+              <div className="fact-ribbon">
+                <div><span>01</span><p>Cratered terrain</p></div>
+                <div><span>02</span><p>Iron-rich dust</p></div>
+                <div><span>03</span><p>Polar ice</p></div>
               </div>
-            </div>
+              {mars && (
+                <Link href={`/object/${mars.slug}`} className="text-link">
+                  Explore Mars in detail <ArrowUpRight size={17} />
+                </Link>
+              )}
+            </Reveal>
           </div>
         </section>
 
-        {/* GIANTS (Jupiter) SECTION */}
-        <section id="rockets" className="section rockets">
-          <div className="split reverse">
-            <div className="copy w-full md:w-1/2">
-              <p className="eyebrow">Gas Giants</p>
-              <h2>Colossal storms in flight</h2>
-              <div className="card parchment tilt-left">
-                <p>
-                  Jupiter and Saturn dominate the solar system. Their massive sizes and chaotic storm bands are a testament to the raw power of gravity and fluid dynamics in space.
-                </p>
+        <section id="rockets" className="section cosmic-section rockets">
+          <SectionNumber>03</SectionNumber>
+          <div className="watercolor-bloom bloom-gold" aria-hidden="true" />
+          <div className="section-shell story-grid story-grid-reverse">
+            <Reveal className="story-copy" delay={0.1}>
+              <p className="eyebrow"><Wind size={14} /> Gas giants</p>
+              <h2>Step inside<br />the storm.</h2>
+              <p className="story-lede">
+                Jupiter is less a surface and more a living weather system—bands folding into each other, lightning below the clouds, and a storm wider than Earth.
+              </p>
+              <div className="storm-card">
+                <span className="storm-pulse" />
+                <div>
+                  <small>Great Red Spot</small>
+                  <strong>A storm observed for centuries</strong>
+                </div>
               </div>
-            </div>
-            <div className="art w-full md:w-1/2 flex justify-center">
               {jupiter && (
-                <motion.div 
-                  animate={{ y: [0, -20, 0] }}
-                  transition={{ duration: 6, repeat: Infinity, ease: "easeInOut" }}
-                  className="w-72 h-72 md:w-[28rem] md:h-[28rem] relative overflow-visible"
-                >
-                  {/* eslint-disable-next-line @next/next/no-img-element */}
-                  <img 
-                    src={jupiter.image_url} 
-                    alt="Jupiter" 
-                    className="w-full h-full object-contain scale-110 drop-shadow-[0_0_40px_rgba(200,180,150,0.3)]" 
-                    style={{
-                      mixBlendMode: "screen",
-                      ...(jupiter.image_url.endsWith('.jpg') ? {
-                        maskImage: "radial-gradient(circle closest-side, black 95%, transparent 100%)",
-                        WebkitMaskImage: "radial-gradient(circle closest-side, black 95%, transparent 100%)",
-                        filter: "contrast(1.2) brightness(0.9)"
-                      } : {})
-                    }}
-                  />
-                </motion.div>
+                <Link href={`/object/${jupiter.slug}`} className="text-link">
+                  Drift around Jupiter <ArrowUpRight size={17} />
+                </Link>
               )}
-            </div>
+            </Reveal>
+
+            <Reveal className="planet-composition jupiter-composition">
+              {jupiter && (
+                <>
+                  <div className="planet-halo jupiter-halo" />
+                  <motion.div
+                    className="story-planet jupiter-planet"
+                    animate={reduceMotion ? undefined : { y: [0, -18, 0], rotate: [-1, 2, -1] }}
+                    transition={{ duration: 7, repeat: Infinity, ease: "easeInOut" }}
+                  >
+                    <PlanetArtwork planet={jupiter} className="story-planet-image" />
+                  </motion.div>
+                  <span className="floating-moon moon-one"><i /> Io</span>
+                  <span className="floating-moon moon-two"><i /> Europa</span>
+                  <span className="floating-moon moon-three"><i /> Ganymede</span>
+                </>
+              )}
+            </Reveal>
           </div>
         </section>
 
-        {/* TEXTURES SECTION */}
-        <section id="textures" className="section textures">
-          <p className="eyebrow">Final glow</p>
-          <h2>Cosmic textures and light</h2>
-          <motion.div 
-            className="w-48 h-48 md:w-72 md:h-72 mx-auto my-12 relative overflow-visible"
-            animate={{ scale: [1, 1.05, 1] }}
-            transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
-          >
-            {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img 
-              src={planets[7]?.image_url} 
-              alt="Neptune" 
-              className="w-full h-full object-contain scale-105 drop-shadow-[0_0_50px_rgba(150,200,250,0.5)]" 
-              style={{
-                mixBlendMode: "screen",
-                ...(planets[7]?.image_url.endsWith('.jpg') ? {
-                  maskImage: "radial-gradient(circle closest-side, black 95%, transparent 100%)",
-                  WebkitMaskImage: "radial-gradient(circle closest-side, black 95%, transparent 100%)",
-                  filter: "contrast(1.2) brightness(0.9)"
-                } : {})
-              }}
-            />
-          </motion.div>
-          <p className="closing max-w-2xl mx-auto text-lg">
-            High-resolution captures from space probes build a sense of depth in every planet, while the real sunlight reflecting off atmospheres blends into a calm, glowing presence.
-          </p>
+        <section id="textures" className="section cosmic-section textures">
+          <SectionNumber>04</SectionNumber>
+          <div className="watercolor-bloom bloom-blue" aria-hidden="true" />
+          <div className="section-shell final-shell">
+            <Reveal className="section-heading section-heading-centered">
+              <p className="eyebrow"><Sparkles size={14} /> One last glow</p>
+              <h2>Keep looking up.</h2>
+              <p className="section-lede">
+                The farther we travel, the quieter the light becomes—and the more there is to discover.
+              </p>
+            </Reveal>
+
+            {neptune && (
+              <Reveal className="neptune-portal" delay={0.1}>
+                <motion.div
+                  className="portal-orbit portal-orbit-outer"
+                  animate={reduceMotion ? undefined : { rotate: 360 }}
+                  transition={{ duration: 36, repeat: Infinity, ease: "linear" }}
+                />
+                <motion.div
+                  className="portal-orbit portal-orbit-inner"
+                  animate={reduceMotion ? undefined : { rotate: -360 }}
+                  transition={{ duration: 24, repeat: Infinity, ease: "linear" }}
+                />
+                <motion.div
+                  className="neptune-glow"
+                  animate={reduceMotion ? undefined : { scale: [0.96, 1.08, 0.96], opacity: [0.5, 0.9, 0.5] }}
+                  transition={{ duration: 5, repeat: Infinity, ease: "easeInOut" }}
+                />
+                <motion.div
+                  className="neptune-planet"
+                  animate={reduceMotion ? undefined : { y: [0, -12, 0] }}
+                  transition={{ duration: 6, repeat: Infinity, ease: "easeInOut" }}
+                >
+                  <PlanetArtwork planet={neptune} className="story-planet-image" />
+                </motion.div>
+                <span className="portal-caption">4.5 billion km from the Sun</span>
+              </Reveal>
+            )}
+
+            <Reveal className="final-copy" delay={0.18}>
+              <p>
+                Eight planets. Eight completely different worlds. Move closer, rotate them, and find the details hidden in their light.
+              </p>
+              <Link href="/explore" className="final-cta">
+                Explore the full collection <ArrowUpRight size={18} />
+              </Link>
+            </Reveal>
+
+            <div className="cosmic-ticker" aria-hidden="true">
+              <span>Mercury ✦ Venus ✦ Earth ✦ Mars ✦ Jupiter ✦ Saturn ✦ Uranus ✦ Neptune ✦</span>
+              <span>Mercury ✦ Venus ✦ Earth ✦ Mars ✦ Jupiter ✦ Saturn ✦ Uranus ✦ Neptune ✦</span>
+            </div>
+          </div>
         </section>
       </main>
 
-      <footer className="relative z-10 py-10 bg-[var(--navy-950)] text-[var(--cream)] opacity-60 text-sm tracking-widest uppercase">
-        ✳ Explored by those who look up ✳
+      <footer className="site-footer">
+        <span>✳ Explored by those who look up ✳</span>
+        <Link href="/explore">All worlds <ArrowUpRight size={14} /></Link>
       </footer>
     </>
   );
