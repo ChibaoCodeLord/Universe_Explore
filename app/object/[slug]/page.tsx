@@ -2,6 +2,7 @@ import { planets } from "@/lib/data";
 import { notFound } from "next/navigation";
 import Link from "next/link";
 import { ChevronLeft } from "lucide-react";
+import VisualColumn from "@/app/components/VisualColumn";
 
 export function generateStaticParams() {
   return planets.map((planet) => ({
@@ -44,51 +45,7 @@ export default async function ObjectDetailPage({ params }: { params: Promise<{ s
 
         <div className="flex flex-col lg:flex-row gap-12 items-start">
           {/* Visual Column */}
-          <div className="w-full lg:w-1/2 flex flex-col items-center relative">
-            {/* Floating Watercolor Star */}
-            <div 
-              className="absolute -top-10 -left-10 w-24 md:w-32 z-20 mix-blend-screen pointer-events-none"
-              style={{ animation: "float-star 6s ease-in-out infinite" }}
-            >
-              {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img 
-                src="/assets/star.jpg" 
-                alt="Watercolor Star" 
-                className="w-full h-auto object-contain"
-                style={{ 
-                  filter: "contrast(1.4) brightness(0.9)",
-                  maskImage: "radial-gradient(circle at center, black 50%, transparent 75%)",
-                  WebkitMaskImage: "radial-gradient(circle at center, black 50%, transparent 75%)"
-                }}
-              />
-            </div>
-            
-            <div className="relative w-full aspect-square max-w-md flex items-center justify-center p-4 mb-8">
-              {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img 
-                src={planet.image_url} 
-                alt={planet.name} 
-                className="w-full h-full object-contain drop-shadow-[0_0_30px_rgba(255,255,255,0.2)]"
-                style={{
-                  mixBlendMode: "screen",
-                  ...(planet.image_url.endsWith('.jpg') ? {
-                    maskImage: "radial-gradient(circle closest-side, black 95%, transparent 100%)",
-                    WebkitMaskImage: "radial-gradient(circle closest-side, black 95%, transparent 100%)",
-                    filter: "contrast(1.2) brightness(0.9)"
-                  } : {})
-                }}
-              />
-            </div>
-            
-            <div className="flex flex-wrap gap-4 justify-center w-full max-w-md">
-              <button className="px-6 py-3 bg-white hover:bg-gray-200 text-black text-sm font-bold tracking-wider rounded-full shadow-[0_4px_15px_rgba(0,0,0,0.3)] transition-all flex-1 min-w-[140px]">
-                VIEW 3D
-              </button>
-              <button className="px-6 py-3 bg-transparent hover:bg-white/10 text-white text-sm font-bold tracking-wider rounded-full border border-white/30 transition-all flex-1 min-w-[140px]">
-                COMPARE
-              </button>
-            </div>
-          </div>
+          <VisualColumn planet={planet} />
 
           {/* Info Column */}
           <div className="w-full lg:w-1/2">

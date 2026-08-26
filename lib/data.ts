@@ -12,6 +12,8 @@ export interface Planet {
   year: string;
   moons: number;
   temperature: string;
+  color: string;
+  texture_url: string;
 }
 
 export const planets: Planet[] = [
@@ -29,6 +31,8 @@ export const planets: Planet[] = [
     year: "88 Earth days",
     moons: 0,
     temperature: "-173°C to 427°C",
+    color: "#8c8c8c",
+    texture_url: "",
   },
   {
     id: "2",
@@ -44,6 +48,8 @@ export const planets: Planet[] = [
     year: "225 Earth days",
     moons: 0,
     temperature: "462°C",
+    color: "#e3bb76",
+    texture_url: "",
   },
   {
     id: "3",
@@ -59,6 +65,8 @@ export const planets: Planet[] = [
     year: "365.25 days",
     moons: 1,
     temperature: "-88°C to 58°C",
+    color: "#2b82c9",
+    texture_url: "/textures/earth_atmos_2048.jpg",
   },
   {
     id: "4",
@@ -74,6 +82,8 @@ export const planets: Planet[] = [
     year: "687 Earth days",
     moons: 2,
     temperature: "-153°C to 20°C",
+    color: "#c1440e",
+    texture_url: "",
   },
   {
     id: "5",
@@ -89,6 +99,8 @@ export const planets: Planet[] = [
     year: "11.86 Earth years",
     moons: 95,
     temperature: "-110°C",
+    color: "#d39c7e",
+    texture_url: "",
   },
   {
     id: "6",
@@ -104,6 +116,8 @@ export const planets: Planet[] = [
     year: "29.45 Earth years",
     moons: 146,
     temperature: "-140°C",
+    color: "#ead6b8",
+    texture_url: "",
   },
   {
     id: "7",
@@ -119,6 +133,8 @@ export const planets: Planet[] = [
     year: "84 Earth years",
     moons: 27,
     temperature: "-195°C",
+    color: "#4b70dd",
+    texture_url: "",
   },
   {
     id: "8",
@@ -134,5 +150,7 @@ export const planets: Planet[] = [
     year: "164.8 Earth years",
     moons: 14,
     temperature: "-200°C",
+    color: "#274687",
+    texture_url: "",
   }
 ];
