@@ -1,14 +1,16 @@
 import type { Metadata } from "next";
-import { Baloo_2, Quicksand } from "next/font/google";
+import { Chewy, Comic_Neue } from "next/font/google";
 import "./globals.css";
 
-const baloo2 = Baloo_2({
-  variable: "--font-baloo-2",
+const chewy = Chewy({
+  variable: "--font-chewy",
+  weight: "400",
   subsets: ["latin"],
 });
 
-const quicksand = Quicksand({
-  variable: "--font-quicksand",
+const comicNeue = Comic_Neue({
+  variable: "--font-comic-neue",
+  weight: ["300", "400", "700"],
   subsets: ["latin"],
 });
 
@@ -25,7 +27,7 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body
-        className={`${quicksand.variable} ${baloo2.variable} antialiased`}
+        className={`${comicNeue.variable} ${chewy.variable} antialiased bg-black`}
       >
         {children}
       </body>

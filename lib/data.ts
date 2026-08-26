@@ -12,6 +12,8 @@ export interface Planet {
   year: string;
   moons: number;
   temperature: string;
+  color: string;
+  texture_url: string;
 }
 
 export const planets: Planet[] = [
@@ -29,6 +31,8 @@ export const planets: Planet[] = [
     year: "88 Earth days",
     moons: 0,
     temperature: "-173°C to 427°C",
+    color: "#8c8c8c",
+    texture_url: "/textures/4k_mercury.jpg",
   },
   {
     id: "2",
@@ -44,6 +48,8 @@ export const planets: Planet[] = [
     year: "225 Earth days",
     moons: 0,
     temperature: "462°C",
+    color: "#e3bb76",
+    texture_url: "/textures/2k_venus_atmosphere.jpg",
   },
   {
     id: "3",
@@ -59,6 +65,8 @@ export const planets: Planet[] = [
     year: "365.25 days",
     moons: 1,
     temperature: "-88°C to 58°C",
+    color: "#2b82c9",
+    texture_url: "/textures/earth_atmos_2048.jpg",
   },
   {
     id: "4",
@@ -74,6 +82,8 @@ export const planets: Planet[] = [
     year: "687 Earth days",
     moons: 2,
     temperature: "-153°C to 20°C",
+    color: "#c1440e",
+    texture_url: "/textures/4k_mars.jpg",
   },
   {
     id: "5",
@@ -89,6 +99,8 @@ export const planets: Planet[] = [
     year: "11.86 Earth years",
     moons: 95,
     temperature: "-110°C",
+    color: "#d39c7e",
+    texture_url: "/textures/4k_jupiter.jpg",
   },
   {
     id: "6",
@@ -96,7 +108,7 @@ export const planets: Planet[] = [
     slug: "saturn",
     short_description: "The sixth planet, recognized for its extensive and beautiful ring system.",
     content: "Saturn is the sixth planet from the Sun and the second-largest in the Solar System, after Jupiter. It is a gas giant with an average radius of about nine and a half times that of Earth. It only has one-eighth the average density of Earth; however, with its larger volume, Saturn is over 95 times more massive.",
-    image_url: "https://upload.wikimedia.org/wikipedia/commons/c/c7/Saturn_during_Equinox.jpg",
+    image_url: "https://upload.wikimedia.org/wikipedia/commons/7/7b/Saturn_transparent.png",
     radius: "58,232 km",
     mass: "5.683 × 10²⁶ kg",
     gravity: "10.44 m/s²",
@@ -104,6 +116,8 @@ export const planets: Planet[] = [
     year: "29.45 Earth years",
     moons: 146,
     temperature: "-140°C",
+    color: "#ead6b8",
+    texture_url: "/textures/4k_saturn.jpg",
   },
   {
     id: "7",
@@ -119,6 +133,8 @@ export const planets: Planet[] = [
     year: "84 Earth years",
     moons: 27,
     temperature: "-195°C",
+    color: "#4b70dd",
+    texture_url: "/textures/2k_uranus.jpg",
   },
   {
     id: "8",
@@ -134,5 +150,7 @@ export const planets: Planet[] = [
     year: "164.8 Earth years",
     moons: 14,
     temperature: "-200°C",
+    color: "#274687",
+    texture_url: "/textures/2k_neptune.jpg",
   }
 ];
