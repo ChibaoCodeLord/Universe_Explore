@@ -133,12 +133,13 @@ export default function Home() {
 
       <main className="relative z-10">
         {/* HERO SECTION */}
-        <section id="hero" className="section hero relative">
-          <svg className="swirl absolute top-[10%] left-1/2 -translate-x-1/2 w-64 md:w-96 opacity-30 z-0" viewBox="0 0 260 100" aria-hidden="true">
-            <path d="M10,70 C30,10 90,10 105,45 C120,80 170,85 185,40 C198,0 235,-5 250,25" fill="none" stroke="var(--gold-dark)" strokeWidth="4" strokeLinecap="round" />
+        <section id="hero" className="section hero relative" style={{ backgroundImage: "url('/assets/bg.jpg')", backgroundSize: "cover", backgroundPosition: "center" }}>
+          <div className="absolute inset-0 bg-black/40 z-0"></div>
+          <svg className="swirl absolute top-[-5%] left-[20%] w-64 md:w-96 z-10" viewBox="0 0 260 100" aria-hidden="true">
+            <path d="M10,70 C30,10 90,10 105,45 C120,80 170,85 185,40 C198,0 235,-5 250,25" fill="none" stroke="#E87A3E" strokeWidth="8" strokeLinecap="round" />
           </svg>
 
-          <div className="hero-content relative z-20">
+          <div className="hero-content relative z-20 mt-10">
             <motion.p 
               initial={{ opacity: 0, y: -20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.8 }}
               className="eyebrow"
@@ -147,7 +148,7 @@ export default function Home() {
             </motion.p>
             <motion.h1 
               initial={{ opacity: 0, scale: 0.9 }} animate={{ opacity: 1, scale: 1 }} transition={{ duration: 1 }}
-              className="wordmark"
+              className="wordmark drop-shadow-[0_4px_4px_rgba(0,0,0,0.5)]"
             >
               Universe
             </motion.h1>
@@ -155,7 +156,7 @@ export default function Home() {
               initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.5, duration: 1 }}
               className="tagline"
             >
-              A breathtaking journey across real galaxies, stars and quiet cosmic wonder.
+              Brings the cosmos to life through delicate watercolor textures
             </motion.p>
             <motion.div 
               initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.8, duration: 0.5 }}
@@ -169,28 +170,55 @@ export default function Home() {
             </motion.div>
           </div>
 
-          {/* Floating Realistic Planets in Hero */}
+          {/* Watercolor Star */}
+          <motion.div 
+            className="absolute left-[8%] top-[10%] w-32 md:w-48 z-10 mix-blend-screen"
+            animate={{ y: [0, -15, 0], rotate: [-10, 10, -10] }}
+            transition={{ duration: 5, repeat: Infinity, ease: "easeInOut" }}
+          >
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img 
+              src="/assets/star.jpg" 
+              alt="Watercolor Star" 
+              className="w-full h-auto object-contain"
+              style={{ 
+                filter: "contrast(1.4) brightness(0.9)",
+                maskImage: "radial-gradient(circle at center, black 50%, transparent 75%)",
+                WebkitMaskImage: "radial-gradient(circle at center, black 50%, transparent 75%)"
+              }}
+            />
+          </motion.div>
+
+          {/* Realistic Saturn in bottom left */}
           {saturn && (
             <motion.div 
-              className="absolute left-[5%] bottom-[10%] w-40 md:w-64 z-10 mix-blend-screen"
-              animate={{ y: [0, -30, 0], rotate: [0, 5, 0] }}
+              className="absolute left-[-2%] bottom-[0%] w-56 md:w-96 z-10"
+              animate={{ y: [0, -20, 0], rotate: [0, 5, 0] }}
               transition={{ duration: 8, repeat: Infinity, ease: "easeInOut" }}
             >
               {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img src={saturn.image_url} alt={saturn.name} className="w-full h-auto object-contain drop-shadow-[0_0_30px_rgba(255,255,255,0.2)]" />
+              <img src={saturn.image_url} alt={saturn.name} className="w-full h-auto object-contain drop-shadow-[0_10px_20px_rgba(0,0,0,0.5)]" />
             </motion.div>
           )}
 
-          {earth && (
-            <motion.div 
-              className="absolute right-[8%] top-[20%] w-24 md:w-40 z-10 mix-blend-screen"
-              animate={{ y: [0, 20, 0], rotate: [0, -10, 0] }}
-              transition={{ duration: 6, repeat: Infinity, ease: "easeInOut", delay: 1 }}
-            >
-              {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img src={earth.image_url} alt={earth.name} className="w-full h-auto object-contain drop-shadow-[0_0_20px_rgba(255,255,255,0.3)] rounded-full" />
-            </motion.div>
-          )}
+          {/* Watercolor Rocket */}
+          <motion.div 
+            className="absolute right-[5%] bottom-[5%] w-48 md:w-72 z-10 mix-blend-screen"
+            animate={{ y: [0, 20, 0], rotate: [0, -5, 0] }}
+            transition={{ duration: 6, repeat: Infinity, ease: "easeInOut", delay: 1 }}
+          >
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img 
+              src="/assets/rocket.jpg" 
+              alt="Watercolor Rocket" 
+              className="w-full h-auto object-contain"
+              style={{ 
+                filter: "contrast(1.4) brightness(0.9)",
+                maskImage: "radial-gradient(ellipse at center, black 55%, transparent 75%)",
+                WebkitMaskImage: "radial-gradient(ellipse at center, black 55%, transparent 75%)"
+              }}
+            />
+          </motion.div>
 
           <div className="scrollcue absolute bottom-8">
             scroll<span className="arrow mt-2 block">↓</span>

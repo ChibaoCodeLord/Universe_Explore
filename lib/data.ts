@@ -96,7 +96,7 @@ export const planets: Planet[] = [
     slug: "saturn",
     short_description: "The sixth planet, recognized for its extensive and beautiful ring system.",
     content: "Saturn is the sixth planet from the Sun and the second-largest in the Solar System, after Jupiter. It is a gas giant with an average radius of about nine and a half times that of Earth. It only has one-eighth the average density of Earth; however, with its larger volume, Saturn is over 95 times more massive.",
-    image_url: "https://upload.wikimedia.org/wikipedia/commons/c/c7/Saturn_during_Equinox.jpg",
+    image_url: "https://upload.wikimedia.org/wikipedia/commons/7/7b/Saturn_transparent.png",
     radius: "58,232 km",
     mass: "5.683 × 10²⁶ kg",
     gravity: "10.44 m/s²",
