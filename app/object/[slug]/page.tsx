@@ -1,6 +1,5 @@
 import { planets } from "@/lib/data";
 import { notFound } from "next/navigation";
-import Link from "next/link";
 import { ChevronLeft } from "lucide-react";
 import VisualColumn from "@/app/components/VisualColumn";
 
@@ -27,21 +26,21 @@ export default async function ObjectDetailPage({ params }: { params: Promise<{ s
       
       {/* Navbar */}
       <nav className="w-full p-6 flex justify-between items-center z-50 absolute top-0">
-        <Link href="/" className="text-2xl font-[var(--font-chewy)] text-white drop-shadow-[0_2px_4px_rgba(0,0,0,0.5)] tracking-widest">UNIVERSE</Link>
+        <a href="/" className="text-2xl font-[var(--font-chewy)] text-white drop-shadow-[0_2px_4px_rgba(0,0,0,0.5)] tracking-widest">UNIVERSE</a>
         <ul className="flex space-x-8 text-sm font-semibold tracking-wider text-[var(--cream)] opacity-80">
-          <li><Link href="/" className="hover:opacity-100 transition-opacity">Home</Link></li>
-          <li><Link href="/explore" className="opacity-100 font-bold border-b-2 border-[var(--gold)]">Explore</Link></li>
+          <li><a href="/" className="hover:opacity-100 transition-opacity">Home</a></li>
+          <li><a href="/explore" className="opacity-100 font-bold border-b-2 border-[var(--gold)]">Explore</a></li>
         </ul>
       </nav>
 
       <div className="pt-24 pb-12 px-6 max-w-6xl mx-auto relative z-10">
-        <Link 
+        <a
           href="/explore" 
           className="inline-flex items-center text-[var(--gold-light)] hover:text-[var(--gold)] transition-colors font-semibold tracking-wider text-sm mb-8"
         >
           <ChevronLeft className="w-4 h-4 mr-1" />
           BACK TO EXPLORE
-        </Link>
+        </a>
 
         <div className="flex flex-col lg:flex-row gap-12 items-start">
           {/* Visual Column */}

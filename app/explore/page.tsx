@@ -1,7 +1,6 @@
 "use client";
 
 import { planets } from "@/lib/data";
-import Link from "next/link";
 import { motion } from "framer-motion";
 import { useEffect } from "react";
 
@@ -47,10 +46,10 @@ export default function ExplorePage() {
       
       {/* Navbar (Simplified for subpages) */}
       <nav className="absolute top-0 left-0 w-full p-6 flex justify-between items-center z-50">
-        <Link href="/" className="text-2xl font-[var(--font-chewy)] text-white drop-shadow-[0_2px_4px_rgba(0,0,0,0.5)] tracking-widest">UNIVERSE</Link>
+        <a href="/" className="text-2xl font-[var(--font-chewy)] text-white drop-shadow-[0_2px_4px_rgba(0,0,0,0.5)] tracking-widest">UNIVERSE</a>
         <ul className="flex space-x-8 text-sm font-semibold tracking-wider text-[var(--cream)] opacity-80">
-          <li><Link href="/" className="hover:opacity-100 transition-opacity">Home</Link></li>
-          <li><Link href="/explore" className="opacity-100 font-bold border-b-2 border-[var(--gold)]">Explore</Link></li>
+          <li><a href="/" className="hover:opacity-100 transition-opacity">Home</a></li>
+          <li><a href="/explore" className="opacity-100 font-bold border-b-2 border-[var(--gold)]">Explore</a></li>
         </ul>
       </nav>
 
@@ -100,11 +99,12 @@ export default function ExplorePage() {
               <div className="p-6 flex-grow flex flex-col">
                 <h2 className="text-3xl mb-2 font-[var(--font-chewy)] text-white">{planet.name}</h2>
                 <p className="text-base mb-6 flex-grow font-medium leading-relaxed opacity-80">{planet.short_description}</p>
-                <Link href={`/object/${planet.slug}`} className="w-full block">
-                  <button className="w-full py-2 bg-transparent hover:bg-white/10 text-white border border-white/30 rounded-full text-sm font-bold tracking-wider transition-colors shadow-sm">
-                    LEARN MORE
-                  </button>
-                </Link>
+                <a
+                  href={`/object/${planet.slug}`}
+                  className="w-full block py-2 bg-transparent hover:bg-white/10 text-white text-center border border-white/30 rounded-full text-sm font-bold tracking-wider transition-colors shadow-sm"
+                >
+                  LEARN MORE
+                </a>
               </div>
             </motion.div>
           ))}
