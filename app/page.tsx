@@ -293,9 +293,9 @@ export default function Home() {
               transition={{ delay: 0.8, duration: 0.5 }}
               className="mt-10"
             >
-              <Link href="/explore" className="hero-cta">
+              <a href="/explore" className="hero-cta">
                 Start exploring <ArrowUpRight size={17} />
-              </Link>
+              </a>
             </motion.div>
           </div>
 
