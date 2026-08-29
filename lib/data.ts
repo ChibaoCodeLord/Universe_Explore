@@ -1,7 +1,9 @@
 export interface Planet {
   id: string;
+  order: number;
   name: string;
   slug: string;
+  category: "Rocky" | "Gas giant" | "Ice giant";
   short_description: string;
   content: string;
   image_url: string;
@@ -12,6 +14,9 @@ export interface Planet {
   year: string;
   moons: number;
   temperature: string;
+  radius_km: number;
+  distance_million_km: number;
+  orbital_period_days: number;
   color: string;
   texture_url: string;
 }
@@ -19,8 +24,10 @@ export interface Planet {
 export const planets: Planet[] = [
   {
     id: "1",
+    order: 1,
     name: "Mercury",
     slug: "mercury",
+    category: "Rocky",
     short_description: "The smallest planet in our solar system and closest to the Sun.",
     content: "Mercury is the smallest planet in the Solar System and the closest to the Sun. Its orbit around the Sun takes 87.97 Earth days, the shortest of all the Sun's planets. Mercury is a rocky planet with a solid, cratered surface, much like the Earth's moon.",
     image_url: "https://upload.wikimedia.org/wikipedia/commons/4/4a/Mercury_in_true_color.jpg",
@@ -31,13 +38,18 @@ export const planets: Planet[] = [
     year: "88 Earth days",
     moons: 0,
     temperature: "-173°C to 427°C",
+    radius_km: 2439.7,
+    distance_million_km: 57.9,
+    orbital_period_days: 87.97,
     color: "#8c8c8c",
     texture_url: "/textures/4k_mercury.jpg",
   },
   {
     id: "2",
+    order: 2,
     name: "Venus",
     slug: "venus",
+    category: "Rocky",
     short_description: "The second planet from the Sun, known for its thick, toxic atmosphere.",
     content: "Venus is the second planet from the Sun. It is named after the Roman goddess of love and beauty. As the brightest natural object in Earth's night sky after the Moon, Venus can cast shadows and can be, on rare occasions, visible to the naked eye in broad daylight.",
     image_url: "https://upload.wikimedia.org/wikipedia/commons/e/e5/Venus-real_color.jpg",
@@ -48,13 +60,18 @@ export const planets: Planet[] = [
     year: "225 Earth days",
     moons: 0,
     temperature: "462°C",
+    radius_km: 6051.8,
+    distance_million_km: 108.2,
+    orbital_period_days: 224.7,
     color: "#e3bb76",
     texture_url: "/textures/2k_venus_atmosphere.jpg",
   },
   {
     id: "3",
+    order: 3,
     name: "Earth",
     slug: "earth",
+    category: "Rocky",
     short_description: "Our home planet, the only known place in the universe to harbor life.",
     content: "Earth is the third planet from the Sun and the only astronomical object known to harbor life. About 29.2% of Earth's surface is land consisting of continents and islands. The remaining 70.8% is covered with water, mostly by oceans, seas, gulfs, and other salt-water bodies.",
     image_url: "https://upload.wikimedia.org/wikipedia/commons/9/97/The_Earth_seen_from_Apollo_17.jpg",
@@ -65,13 +82,18 @@ export const planets: Planet[] = [
     year: "365.25 days",
     moons: 1,
     temperature: "-88°C to 58°C",
+    radius_km: 6371,
+    distance_million_km: 149.6,
+    orbital_period_days: 365.25,
     color: "#2b82c9",
     texture_url: "/textures/earth_atmos_2048.jpg",
   },
   {
     id: "4",
+    order: 4,
     name: "Mars",
     slug: "mars",
+    category: "Rocky",
     short_description: "The Red Planet, a dusty, cold, desert world with a very thin atmosphere.",
     content: "Mars is the fourth planet from the Sun and the second-smallest planet in the Solar System, being larger than only Mercury. In English, Mars carries the name of the Roman god of war and is often referred to as the 'Red Planet'.",
     image_url: "https://upload.wikimedia.org/wikipedia/commons/0/02/OSIRIS_Mars_true_color.jpg",
@@ -82,13 +104,18 @@ export const planets: Planet[] = [
     year: "687 Earth days",
     moons: 2,
     temperature: "-153°C to 20°C",
+    radius_km: 3389.5,
+    distance_million_km: 227.9,
+    orbital_period_days: 686.98,
     color: "#c1440e",
     texture_url: "/textures/4k_mars.jpg",
   },
   {
     id: "5",
+    order: 5,
     name: "Jupiter",
     slug: "jupiter",
+    category: "Gas giant",
     short_description: "The largest planet in our solar system, a gas giant with a Great Red Spot.",
     content: "Jupiter is the fifth planet from the Sun and the largest in the Solar System. It is a gas giant with a mass more than two and a half times that of all the other planets in the Solar System combined, but slightly less than one-thousandth the mass of the Sun.",
     image_url: "https://upload.wikimedia.org/wikipedia/commons/e/e2/Jupiter.jpg",
@@ -99,13 +126,18 @@ export const planets: Planet[] = [
     year: "11.86 Earth years",
     moons: 95,
     temperature: "-110°C",
+    radius_km: 69911,
+    distance_million_km: 778.5,
+    orbital_period_days: 4332.59,
     color: "#d39c7e",
     texture_url: "/textures/4k_jupiter.jpg",
   },
   {
     id: "6",
+    order: 6,
     name: "Saturn",
     slug: "saturn",
+    category: "Gas giant",
     short_description: "The sixth planet, recognized for its extensive and beautiful ring system.",
     content: "Saturn is the sixth planet from the Sun and the second-largest in the Solar System, after Jupiter. It is a gas giant with an average radius of about nine and a half times that of Earth. It only has one-eighth the average density of Earth; however, with its larger volume, Saturn is over 95 times more massive.",
     image_url: "https://upload.wikimedia.org/wikipedia/commons/7/7b/Saturn_transparent.png",
@@ -116,13 +148,18 @@ export const planets: Planet[] = [
     year: "29.45 Earth years",
     moons: 146,
     temperature: "-140°C",
+    radius_km: 58232,
+    distance_million_km: 1434,
+    orbital_period_days: 10759,
     color: "#ead6b8",
     texture_url: "/textures/4k_saturn.jpg",
   },
   {
     id: "7",
+    order: 7,
     name: "Uranus",
     slug: "uranus",
+    category: "Ice giant",
     short_description: "An ice giant that rotates on its side, making it unique in the solar system.",
     content: "Uranus is the seventh planet from the Sun. Its name is a reference to the Greek god of the sky, Uranus. It has the third-largest planetary radius and fourth-largest planetary mass in the Solar System.",
     image_url: "https://upload.wikimedia.org/wikipedia/commons/3/3d/Uranus2.jpg",
@@ -133,13 +170,18 @@ export const planets: Planet[] = [
     year: "84 Earth years",
     moons: 27,
     temperature: "-195°C",
+    radius_km: 25362,
+    distance_million_km: 2871,
+    orbital_period_days: 30688.5,
     color: "#4b70dd",
     texture_url: "/textures/2k_uranus.jpg",
   },
   {
     id: "8",
+    order: 8,
     name: "Neptune",
     slug: "neptune",
+    category: "Ice giant",
     short_description: "The eighth and farthest known planet from the Sun, a dark and cold ice giant.",
     content: "Neptune is the eighth and farthest-known Solar planet from the Sun. In the Solar System, it is the fourth-largest planet by diameter, the third-most-massive planet, and the densest giant planet.",
     image_url: "https://upload.wikimedia.org/wikipedia/commons/5/56/Neptune_Full.jpg",
@@ -150,6 +192,9 @@ export const planets: Planet[] = [
     year: "164.8 Earth years",
     moons: 14,
     temperature: "-200°C",
+    radius_km: 24622,
+    distance_million_km: 4495,
+    orbital_period_days: 60182,
     color: "#274687",
     texture_url: "/textures/2k_neptune.jpg",
   }
