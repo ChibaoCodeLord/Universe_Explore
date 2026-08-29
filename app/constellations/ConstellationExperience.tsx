@@ -163,8 +163,9 @@ export default function ConstellationExperience({
               { "--constellation-accent": selectedConstellation.accent } as React.CSSProperties
             }
           >
-            <div className="constellation-info-symbol" aria-hidden="true">
-              {selectedConstellation.symbol}
+            <div className="constellation-info-mark" aria-hidden="true">
+              <i />
+              <span>{selectedConstellation.iauAbbreviation}</span>
             </div>
             <p className="constellation-info-index">
               Field {String(selectedConstellation.orderAlongEcliptic).padStart(2, "0")}
@@ -246,7 +247,7 @@ export default function ConstellationExperience({
             >
               <div className="constellation-card-topline">
                 <span>{String(index + 1).padStart(2, "0")}</span>
-                <span>{constellation.symbol}</span>
+                <span>{constellation.iauAbbreviation}</span>
               </div>
               <StarPattern constellation={constellation} compact decorative />
               <div className="constellation-card-copy">
@@ -268,4 +269,3 @@ export default function ConstellationExperience({
     </>
   );
 }
-

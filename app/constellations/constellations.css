@@ -226,10 +226,17 @@
   position: absolute;
   left: 50%;
   top: 50%;
-  color: var(--gold-light);
-  font-size: 1rem;
   transform: rotate(var(--orbit-angle)) translateX(18.5rem)
     rotate(calc(var(--orbit-angle) * -1));
+}
+
+.constellation-hero-orbit span i {
+  display: block;
+  width: 8px;
+  height: 8px;
+  border: 2px solid var(--navy-950);
+  border-radius: 50%;
+  box-shadow: 0 0 0 1px currentColor, 0 0 14px currentColor;
 }
 
 .constellation-explorer,
@@ -605,14 +612,68 @@
   pointer-events: none;
 }
 
-.constellation-info-symbol {
+.constellation-info-mark {
   position: absolute;
-  z-index: 0;
-  right: 1rem;
-  top: .2rem;
-  color: rgba(255, 255, 255, .08);
-  font-size: 7.5rem;
+  z-index: 1;
+  right: 1.35rem;
+  top: 1.25rem;
+  width: 4.7rem;
+  aspect-ratio: 1.12;
+  display: grid;
+  place-items: center;
+  color: color-mix(in srgb, var(--constellation-accent) 82%, var(--cream));
+  border: 1px dashed color-mix(in srgb, var(--constellation-accent) 52%, transparent);
+  border-radius: 48% 52% 44% 56% / 53% 44% 56% 47%;
+  background: color-mix(in srgb, var(--constellation-accent) 8%, transparent);
+  transform: rotate(4deg);
+}
+
+.constellation-info-mark::before {
+  content: "";
+  position: absolute;
+  left: 18%;
+  top: 28%;
+  width: 64%;
+  height: 1px;
+  opacity: .45;
+  background: currentColor;
+  transform: rotate(-24deg);
+}
+
+.constellation-info-mark i,
+.constellation-info-mark i::before {
+  position: absolute;
+  display: block;
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: currentColor;
+  box-shadow: 0 0 10px currentColor;
+}
+
+.constellation-info-mark i {
+  left: 20%;
+  top: 54%;
+}
+
+.constellation-info-mark i::before {
+  content: "";
+  left: 2.7rem;
+  top: -1.45rem;
+}
+
+.constellation-info-mark span {
+  position: relative;
+  z-index: 1;
+  padding: .18rem .35rem;
+  color: var(--cream);
+  background: rgba(7, 11, 39, .72);
+  font-size: .55rem;
+  font-weight: 800;
+  letter-spacing: .18em;
   line-height: 1;
+  text-transform: uppercase;
+  transform: rotate(-4deg);
 }
 
 .constellation-info-index {
@@ -1081,7 +1142,11 @@
 
 .constellation-card-topline span:last-child {
   color: var(--constellation-accent);
-  font-size: 1.35rem;
+  padding: .24rem .4rem;
+  border: 1px solid color-mix(in srgb, var(--constellation-accent) 36%, transparent);
+  border-radius: 999px;
+  font-size: .52rem;
+  letter-spacing: .16em;
 }
 
 .constellation-gallery-card .star-pattern {

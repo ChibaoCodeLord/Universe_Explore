@@ -60,7 +60,12 @@ export default async function ConstellationsPage({
                 key={constellation.slug}
                 style={{ "--orbit-index": index } as React.CSSProperties}
               >
-                {constellation.symbol}
+                <i
+                  style={{
+                    backgroundColor: constellation.accent,
+                    color: constellation.accent,
+                  }}
+                />
               </span>
             ))}
           </div>
@@ -302,4 +307,3 @@ export default async function ConstellationsPage({
     </div>
   );
 }
-

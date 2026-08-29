@@ -24,7 +24,6 @@ export type Constellation = {
   name: string;
   vietnameseName: string;
   iauAbbreviation: string;
-  symbol: string;
   accent: string;
   meaning: string;
   shortDescription: string;
@@ -62,7 +61,6 @@ export const constellations: Constellation[] = [
     name: "Aries",
     vietnameseName: "Bạch Dương",
     iauAbbreviation: "Ari",
-    symbol: "♈",
     accent: "#ef9a78",
     meaning: "The Ram",
     shortDescription: "A compact, bent line of stars led by warm-toned Hamal.",
@@ -92,7 +90,6 @@ export const constellations: Constellation[] = [
     name: "Taurus",
     vietnameseName: "Kim Ngưu",
     iauAbbreviation: "Tau",
-    symbol: "♉",
     accent: "#e7b768",
     meaning: "The Bull",
     shortDescription: "A bright V-shaped face with Aldebaran glowing at one edge.",
@@ -124,7 +121,6 @@ export const constellations: Constellation[] = [
     name: "Gemini",
     vietnameseName: "Song Tử",
     iauAbbreviation: "Gem",
-    symbol: "♊",
     accent: "#9ecde0",
     meaning: "The Twins",
     shortDescription: "Two near-parallel trails descend from Castor and Pollux.",
@@ -156,7 +152,6 @@ export const constellations: Constellation[] = [
     name: "Cancer",
     vietnameseName: "Cự Giải",
     iauAbbreviation: "Cnc",
-    symbol: "♋",
     accent: "#b7a6dd",
     meaning: "The Crab",
     shortDescription: "A faint, open Y surrounding the soft glow of the Beehive.",
@@ -186,7 +181,6 @@ export const constellations: Constellation[] = [
     name: "Leo",
     vietnameseName: "Sư Tử",
     iauAbbreviation: "Leo",
-    symbol: "♌",
     accent: "#f0ae5e",
     meaning: "The Lion",
     shortDescription: "A backward question mark rises from Regulus into a triangle.",
@@ -218,7 +212,6 @@ export const constellations: Constellation[] = [
     name: "Virgo",
     vietnameseName: "Xử Nữ",
     iauAbbreviation: "Vir",
-    symbol: "♍",
     accent: "#9cc6aa",
     meaning: "The Maiden",
     shortDescription: "A sprawling tilted figure ending at brilliant blue-white Spica.",
@@ -250,7 +243,6 @@ export const constellations: Constellation[] = [
     name: "Libra",
     vietnameseName: "Thiên Bình",
     iauAbbreviation: "Lib",
-    symbol: "♎",
     accent: "#e7a9bb",
     meaning: "The Scales",
     shortDescription: "A clean four-star diamond balances between Virgo and Scorpius.",
@@ -280,7 +272,6 @@ export const constellations: Constellation[] = [
     name: "Scorpius",
     vietnameseName: "Bọ Cạp",
     iauAbbreviation: "Sco",
-    symbol: "♏",
     accent: "#e77459",
     meaning: "The Scorpion",
     shortDescription: "A red heart and a long hooked tail make a rare name-like shape.",
@@ -313,7 +304,6 @@ export const constellations: Constellation[] = [
     name: "Sagittarius",
     vietnameseName: "Nhân Mã",
     iauAbbreviation: "Sgr",
-    symbol: "♐",
     accent: "#d9b46f",
     meaning: "The Archer",
     shortDescription: "Its central stars form the famous Teapot beside the Milky Way.",
@@ -345,7 +335,6 @@ export const constellations: Constellation[] = [
     name: "Capricornus",
     vietnameseName: "Ma Kết",
     iauAbbreviation: "Cap",
-    symbol: "♑",
     accent: "#87b8b2",
     meaning: "The Sea-Goat",
     shortDescription: "A broad, faint triangle stretches across a quiet southern field.",
@@ -375,7 +364,6 @@ export const constellations: Constellation[] = [
     name: "Aquarius",
     vietnameseName: "Bảo Bình",
     iauAbbreviation: "Aqr",
-    symbol: "♒",
     accent: "#72b8d5",
     meaning: "The Water Bearer",
     shortDescription: "A small Water Jar opens into long streams of faint stars.",
@@ -407,7 +395,6 @@ export const constellations: Constellation[] = [
     name: "Pisces",
     vietnameseName: "Song Ngư",
     iauAbbreviation: "Psc",
-    symbol: "♓",
     accent: "#a99bd8",
     meaning: "The Fishes",
     shortDescription: "Two faint loops are joined by a long celestial cord.",
@@ -439,7 +426,6 @@ export const constellations: Constellation[] = [
     name: "Ophiuchus",
     vietnameseName: "Xà Phu",
     iauAbbreviation: "Oph",
-    symbol: "⛎",
     accent: "#cf8bc2",
     meaning: "The Serpent Bearer",
     shortDescription: "A tall many-sided figure stands above Scorpius on the ecliptic.",
@@ -469,4 +455,3 @@ export const constellations: Constellation[] = [
 export function getConstellation(slug: string) {
   return constellations.find((constellation) => constellation.slug === slug);
 }
-
