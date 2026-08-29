@@ -54,6 +54,9 @@ body {
 }
 
 .site-shell-brand {
+  display: inline-flex;
+  align-items: center;
+  gap: .65rem;
   color: var(--cream);
   font-family: var(--font-heading);
   font-size: 1.55rem;
@@ -61,6 +64,25 @@ body {
   text-transform: uppercase;
   text-decoration: none;
   text-shadow: 0 3px 12px rgba(0, 0, 0, .38);
+  transition: transform .25s ease, text-shadow .25s ease;
+}
+
+.site-shell-brand:hover {
+  transform: translateY(-1px);
+  text-shadow: 0 0 16px rgba(246, 209, 144, .6);
+}
+
+.site-logo-icon {
+  width: 32px;
+  height: 32px;
+  object-fit: contain;
+  filter: drop-shadow(0 0 8px rgba(246, 209, 144, .45));
+  transition: transform .6s cubic-bezier(.34, 1.56, .64, 1), filter .3s ease;
+}
+
+.site-shell-brand:hover .site-logo-icon {
+  transform: rotate(180deg) scale(1.12);
+  filter: drop-shadow(0 0 14px rgba(246, 209, 144, .85));
 }
 
 .site-shell-header nav {

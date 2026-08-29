@@ -262,6 +262,21 @@ export default function Home() {
           </svg>
 
           <div className="hero-content">
+            <motion.div
+              initial={{ opacity: 0, scale: 0.7 }}
+              animate={{ opacity: 1, scale: 1 }}
+              transition={{ duration: 0.9 }}
+              className="flex justify-center mb-2"
+            >
+              <motion.img
+                src="/logo.png"
+                alt="Universe Galaxy Logo"
+                className="w-16 h-16 md:w-20 md:h-20 object-contain drop-shadow-[0_0_24px_rgba(246,209,144,0.65)]"
+                animate={reduceMotion ? undefined : { rotate: 360 }}
+                transition={{ duration: 36, repeat: Infinity, ease: "linear" }}
+              />
+            </motion.div>
+
             <motion.p
               initial={{ opacity: 0, y: -20 }}
               animate={{ opacity: 1, y: 0 }}
