@@ -1,7 +1,6 @@
 "use client";
 
 import { useEffect, useState, type ReactNode } from "react";
-import Link from "next/link";
 import {
   motion,
   useReducedMotion,
@@ -293,9 +292,9 @@ export default function Home() {
               transition={{ delay: 0.8, duration: 0.5 }}
               className="mt-10"
             >
-              <Link href="/explore" className="hero-cta">
+              <a href="/explore" className="hero-cta">
                 Start exploring <ArrowUpRight size={17} />
-              </Link>
+              </a>
             </motion.div>
           </div>
 
@@ -387,7 +386,7 @@ export default function Home() {
                     transition={{ duration: 0.7, delay: index * 0.1, ease: [0.22, 1, 0.36, 1] }}
                     whileHover={reduceMotion ? undefined : { y: -12 }}
                   >
-                    <Link href={`/object/${planet.slug}`} className="mood-planet-card group">
+                    <a href={`/object/${planet.slug}`} className="mood-planet-card group">
                       <span className="mood-card-index">0{index + 1}</span>
                       <div className="mood-planet-stage">
                         <span className="planet-orbit-ring" />
@@ -400,7 +399,7 @@ export default function Home() {
                       <h3>{planet.name}</h3>
                       <p className="mood-detail">{mood.detail}</p>
                       <span className="mood-link">Enter orbit <ArrowUpRight size={15} /></span>
-                    </Link>
+                    </a>
                   </motion.div>
                 );
               })}
@@ -460,9 +459,9 @@ export default function Home() {
                 <div><span>03</span><p>Polar ice</p></div>
               </div>
               {mars && (
-                <Link href={`/object/${mars.slug}`} className="text-link">
+                <a href={`/object/${mars.slug}`} className="text-link">
                   Explore Mars in detail <ArrowUpRight size={17} />
-                </Link>
+                </a>
               )}
             </Reveal>
           </div>
@@ -486,9 +485,9 @@ export default function Home() {
                 </div>
               </div>
               {jupiter && (
-                <Link href={`/object/${jupiter.slug}`} className="text-link">
+                <a href={`/object/${jupiter.slug}`} className="text-link">
                   Drift around Jupiter <ArrowUpRight size={17} />
-                </Link>
+                </a>
               )}
             </Reveal>
 
@@ -556,9 +555,9 @@ export default function Home() {
               <p>
                 Eight planets. Eight completely different worlds. Move closer, rotate them, and find the details hidden in their light.
               </p>
-              <Link href="/explore" className="final-cta">
+              <a href="/explore" className="final-cta">
                 Explore the full collection <ArrowUpRight size={18} />
-              </Link>
+              </a>
             </Reveal>
 
             <div className="cosmic-ticker" aria-hidden="true">
@@ -571,7 +570,7 @@ export default function Home() {
 
       <footer className="site-footer">
         <span>✳ Explored by those who look up ✳</span>
-        <Link href="/explore">All worlds <ArrowUpRight size={14} /></Link>
+        <a href="/explore">All worlds <ArrowUpRight size={14} /></a>
       </footer>
     </>
   );

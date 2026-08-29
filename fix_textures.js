@@ -1,4 +1,4 @@
-const fs = require('fs');
+import fs from "node:fs";
 let data = fs.readFileSync('lib/data.ts', 'utf8');
 
 data = data.replace(/texture_url: "(.*?)",/g, 'texture_url: "",');
