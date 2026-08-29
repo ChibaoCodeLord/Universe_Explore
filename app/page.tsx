@@ -551,6 +551,24 @@ export default function Home() {
               </Reveal>
             )}
 
+            <Reveal className="home-constellation-teaser" delay={0.14}>
+              <div className="home-star-map" aria-hidden="true">
+                <i /><i /><i /><i /><i /><i />
+                <b /><b /><b /><b /><b />
+                <span>Earth view · Scorpius</span>
+              </div>
+              <div>
+                <p className="eyebrow"><Sparkles size={14} /> New field guide</p>
+                <h3>Patterns written in our sky.</h3>
+                <p>
+                  Meet the distant stars behind the zodiac—and discover why twelve familiar signs share the Sun’s path with thirteen constellations.
+                </p>
+                <a href="/constellations" className="text-link">
+                  Follow the constellations <ArrowUpRight size={17} />
+                </a>
+              </div>
+            </Reveal>
+
             <Reveal className="final-copy" delay={0.18}>
               <p>
                 Eight planets. Eight completely different worlds. Move closer, rotate them, and find the details hidden in their light.
@@ -570,7 +588,10 @@ export default function Home() {
 
       <footer className="site-footer">
         <span>✳ Explored by those who look up ✳</span>
-        <a href="/explore">All worlds <ArrowUpRight size={14} /></a>
+        <div className="site-footer-links">
+          <a href="/explore">All worlds <ArrowUpRight size={14} /></a>
+          <a href="/constellations">Sky atlas <ArrowUpRight size={14} /></a>
+        </div>
       </footer>
     </>
   );

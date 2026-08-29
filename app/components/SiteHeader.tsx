@@ -1,7 +1,7 @@
 import Link from "next/link";
 
 type SiteHeaderProps = {
-  active?: "home" | "explore";
+  active?: "home" | "explore" | "constellations";
 };
 
 export default function SiteHeader({ active }: SiteHeaderProps) {
@@ -19,7 +19,13 @@ export default function SiteHeader({ active }: SiteHeaderProps) {
           href="/explore"
           aria-current={active === "explore" ? "page" : undefined}
         >
-          Explore
+          Planets
+        </Link>
+        <Link
+          href="/constellations"
+          aria-current={active === "constellations" ? "page" : undefined}
+        >
+          Constellations
         </Link>
       </nav>
     </header>
