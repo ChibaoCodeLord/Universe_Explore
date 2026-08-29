@@ -44,6 +44,18 @@ function createPRNG(seed: number) {
 const ORBIT_RADII = [2.35, 3.25, 4.15, 5.05, 6.75, 8.25, 9.75, 11.25];
 const DISPLAY_RADII = [0.18, 0.29, 0.31, 0.23, 0.68, 0.58, 0.42, 0.41];
 
+// Keep the overview lightweight. The detail pages retain the original 4K maps.
+const ORBIT_TEXTURE_URLS: Record<string, string> = {
+  mercury: "/textures/orbit_2k_mercury.jpg",
+  venus: "/textures/2k_venus_atmosphere.jpg",
+  earth: "/textures/earth_atmos_2048.jpg",
+  mars: "/textures/orbit_2k_mars.jpg",
+  jupiter: "/textures/orbit_2k_jupiter.jpg",
+  saturn: "/textures/orbit_2k_saturn.jpg",
+  uranus: "/textures/2k_uranus.jpg",
+  neptune: "/textures/2k_neptune.jpg",
+};
+
 // Real Astronomical Axial Tilts (in radians)
 const AXIAL_TILTS: Record<string, number> = {
   mercury: 0.0006, // 0.034°
@@ -495,7 +507,9 @@ function OrbitingPlanet({
   const orbitRef = useRef<THREE.Group>(null);
   const tiltGroupRef = useRef<THREE.Group>(null);
   const planetMeshRef = useRef<THREE.Mesh>(null);
-  const loadedTexture = useTexture(planet.texture_url);
+  const loadedTexture = useTexture(
+    ORBIT_TEXTURE_URLS[planet.slug] ?? planet.texture_url,
+  );
   const [hovered, setHovered] = useState(false);
 
   const texture = useMemo(() => {
@@ -563,7 +577,7 @@ function OrbitingPlanet({
               document.body.style.cursor = "";
             }}
           >
-            <sphereGeometry args={[displayRadius, 64, 64]} />
+            <sphereGeometry args={[displayRadius, 48, 48]} />
             <meshStandardMaterial
               map={texture}
               roughness={planet.slug === "earth" ? 0.75 : planet.category === "Rocky" ? 0.96 : 0.9}
@@ -737,7 +751,7 @@ function SolarSystem({
       <Stars
         radius={42}
         depth={24}
-        count={1800}
+        count={1200}
         factor={2.8}
         saturation={0.35}
         fade
@@ -746,7 +760,7 @@ function SolarSystem({
 
       {/* Volumetric Stardust Particles */}
       <Sparkles
-        count={280}
+        count={180}
         scale={28}
         size={2.2}
         speed={0.25}
@@ -769,7 +783,7 @@ export default function SolarSystemScene(props: SolarSystemSceneProps) {
     >
       <Canvas
         camera={{ position: [0, 13.5, 17.5], fov: 46, near: 0.1, far: 110 }}
-        dpr={[1, 1.8]}
+        dpr={[1, 1.5]}
         gl={{
           antialias: true,
           alpha: false,
