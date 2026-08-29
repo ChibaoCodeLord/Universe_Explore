@@ -1,4 +1,4 @@
-const fs = require('fs');
+import fs from "node:fs";
 let data = fs.readFileSync('lib/data.ts', 'utf8');
 
 const additions = {
