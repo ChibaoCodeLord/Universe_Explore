@@ -422,40 +422,24 @@ function LocalTextureMaterial({ planet, isGasGiant }: SurfaceMaterialProps) {
   const loadedTexture = useTexture(planet.texture_url);
   const look = PLANET_LOOKS[planet.slug];
   const maxAnisotropy = useThree((state) => state.gl.capabilities.getMaxAnisotropy());
-  const maps = useMemo(() => {
-    const prepareTexture = (colorSpace: THREE.ColorSpace) => {
-      const texture = loadedTexture.clone();
-      texture.colorSpace = colorSpace;
-      texture.wrapS = THREE.RepeatWrapping;
-      texture.wrapT = THREE.ClampToEdgeWrapping;
-      texture.minFilter = THREE.LinearMipmapLinearFilter;
-      texture.magFilter = THREE.LinearFilter;
-      texture.anisotropy = Math.min(16, maxAnisotropy);
-      texture.generateMipmaps = true;
-      texture.needsUpdate = true;
-      return texture;
-    };
-
-    return {
-      colorMap: prepareTexture(THREE.SRGBColorSpace),
-      detailMap: prepareTexture(THREE.NoColorSpace),
-    };
+  const texture = useMemo(() => {
+    const prepared = loadedTexture.clone();
+    prepared.colorSpace = THREE.SRGBColorSpace;
+    prepared.wrapS = THREE.RepeatWrapping;
+    prepared.wrapT = THREE.ClampToEdgeWrapping;
+    prepared.minFilter = THREE.LinearMipmapLinearFilter;
+    prepared.magFilter = THREE.LinearFilter;
+    prepared.anisotropy = Math.min(8, maxAnisotropy);
+    prepared.generateMipmaps = true;
+    prepared.needsUpdate = true;
+    return prepared;
   }, [loadedTexture, maxAnisotropy]);
 
-  useEffect(
-    () => () => {
-      maps.colorMap.dispose();
-      maps.detailMap.dispose();
-    },
-    [maps],
-  );
+  useEffect(() => () => texture.dispose(), [texture]);
 
   return (
     <meshPhysicalMaterial
-      map={maps.colorMap}
-      bumpMap={maps.detailMap}
-      roughnessMap={isGasGiant ? undefined : maps.detailMap}
-      bumpScale={look.bumpScale}
+      map={texture}
       roughness={look.roughness}
       metalness={0}
       clearcoat={look.clearcoat}
@@ -492,8 +476,8 @@ function ProceduralTextureMaterial({ planet, isGasGiant }: SurfaceMaterialProps)
 }
 
 function createCloudTexture() {
-  const width = 768;
-  const height = 384;
+  const width = 512;
+  const height = 256;
   const data = new Uint8Array(width * height * 4);
   const seed = 421;
 
@@ -532,7 +516,7 @@ function CloudLayer({ flattening }: { flattening: number }) {
 
   return (
     <mesh ref={cloudRef} scale={[1.014, flattening * 1.014, 1.014]} renderOrder={2}>
-      <sphereGeometry args={[2.5, 96, 96]} />
+      <sphereGeometry args={[2.5, 64, 64]} />
       <meshPhysicalMaterial
         map={texture}
         transparent
@@ -548,8 +532,8 @@ function CloudLayer({ flattening }: { flattening: number }) {
 }
 
 function createAtmosphericDetailTexture(planet: Planet, look: AtmosphericLayerLook) {
-  const width = 1024;
-  const height = 512;
+  const width = 512;
+  const height = 256;
   const data = new Uint8Array(width * height * 4);
   const seed = planet.slug.split("").reduce((sum, char) => sum + char.charCodeAt(0), 0) + 761;
 
@@ -596,7 +580,7 @@ function AtmosphericDetailLayer({
 
   return (
     <mesh ref={layerRef} scale={[1.009, flattening * 1.009, 1.009]} renderOrder={2}>
-      <sphereGeometry args={[2.5, 128, 128]} />
+      <sphereGeometry args={[2.5, 72, 72]} />
       <meshPhysicalMaterial
         map={texture}
         transparent
@@ -705,7 +689,7 @@ function Atmosphere({ look }: { look: PlanetLook }) {
 
   return (
     <mesh scale={[1.065, look.flattening * 1.065, 1.065]} renderOrder={3}>
-      <sphereGeometry args={[2.5, 96, 96]} />
+      <sphereGeometry args={[2.5, 64, 64]} />
       <shaderMaterial
         uniforms={uniforms}
         vertexShader={atmosphereVertexShader}
@@ -733,7 +717,7 @@ function PlanetSphere({ planet }: { planet: Planet }) {
   return (
     <Float speed={1.2} rotationIntensity={0.14} floatIntensity={0.32}>
       <mesh ref={surfaceRef} scale={[1, look.flattening, 1]}>
-        <sphereGeometry args={[2.5, 128, 128]} />
+        <sphereGeometry args={[2.5, 96, 96]} />
         {planet.texture_url ? (
           <LocalTextureMaterial planet={planet} isGasGiant={isGasGiant} />
         ) : (
@@ -848,7 +832,7 @@ export default function VisualColumn({ planet }: { planet: Planet }) {
               <Canvas
                 key={planet.slug}
                 camera={{ position: [0, 0, cameraDistance], fov: 45, near: 0.1, far: 120 }}
-                dpr={[1, 2]}
+                dpr={[1, 1.5]}
                 gl={{ antialias: true, alpha: true, powerPreference: "high-performance" }}
                 onCreated={({ gl }) => {
                   gl.toneMapping = THREE.ACESFilmicToneMapping;
@@ -863,7 +847,7 @@ export default function VisualColumn({ planet }: { planet: Planet }) {
                 
                 <Suspense fallback={null}>
                   <PlanetSphere planet={planet} />
-                  <Stars radius={40} depth={16} count={1200} factor={2.4} saturation={0.18} fade speed={0.45} />
+                  <Stars radius={40} depth={16} count={700} factor={2.4} saturation={0.18} fade speed={0.45} />
                 </Suspense>
                 
                 <OrbitControls 
