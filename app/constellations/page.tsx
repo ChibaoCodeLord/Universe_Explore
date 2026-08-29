@@ -7,9 +7,16 @@ import {
   Layers3,
   Orbit,
   Sparkles,
+  Compass,
+  Calendar,
+  Sun,
+  ShieldCheck,
+  Telescope,
 } from "lucide-react";
 import SiteHeader from "@/app/components/SiteHeader";
 import StarPattern from "@/app/components/StarPattern";
+import StarSkyCanvas from "@/app/components/StarSkyCanvas";
+import ZodiacGlyph from "@/app/components/ZodiacGlyph";
 import {
   constellationSources,
   constellations,
@@ -32,6 +39,37 @@ type ConstellationsPageProps = {
   }>;
 };
 
+// Current season helper for live night sky advice
+function getCurrentSeasonInfo() {
+  const month = new Date().getMonth() + 1; // 1 - 12
+  if (month >= 3 && month <= 5) {
+    return {
+      season: "Spring Sky",
+      featured: ["Leo", "Virgo", "Cancer"],
+      tip: "Look high in the southern sky for the Sickle of Leo and brilliant blue-white Spica in Virgo.",
+    };
+  }
+  if (month >= 6 && month <= 8) {
+    return {
+      season: "Summer Sky",
+      featured: ["Scorpius", "Sagittarius", "Ophiuchus"],
+      tip: "The Milky Way core rises with fiery Antares in Scorpius and the Teapot of Sagittarius.",
+    };
+  }
+  if (month >= 9 && month <= 11) {
+    return {
+      season: "Autumn Sky",
+      featured: ["Capricornus", "Aquarius", "Pisces"],
+      tip: "Faint water constellations dominate the southern horizon alongside Pegasus and Fomalhaut.",
+    };
+  }
+  return {
+    season: "Winter Sky",
+    featured: ["Taurus", "Gemini", "Aries"],
+    tip: "Orange Aldebaran and the twin stars Castor & Pollux shine brilliantly near Orion.",
+  };
+}
+
 export default async function ConstellationsPage({
   searchParams,
 }: ConstellationsPageProps) {
@@ -44,21 +82,27 @@ export default async function ConstellationsPage({
     ? requestedConstellation
     : "scorpius";
   const initialView: ConstellationView =
-    requestedView === "stars" ? "stars" : "pattern";
+    requestedView === "stars" || requestedView === "depth" ? requestedView : "pattern";
   const scorpius = getConstellation("scorpius") ?? constellations[7];
+
+  const currentSky = getCurrentSeasonInfo();
 
   return (
     <div className="constellations-page">
-      <div className="constellation-sky" aria-hidden="true" />
+      {/* Dynamic Starfield & Nebula Canvas */}
+      <StarSkyCanvas accentColor="#e77459" />
       <SiteHeader active="constellations" />
 
       <main>
+        {/* Hero Section */}
         <section className="constellation-hero" aria-labelledby="constellations-title">
+          {/* Ecliptic Orbit Decorative Ring */}
           <div className="constellation-hero-orbit" aria-hidden="true">
             {constellations.map((constellation, index) => (
               <span
                 key={constellation.slug}
                 style={{ "--orbit-index": index } as React.CSSProperties}
+                title={constellation.name}
               >
                 <i
                   style={{
@@ -71,17 +115,44 @@ export default async function ConstellationsPage({
           </div>
 
           <div className="constellation-hero-copy">
-            <p className="constellation-kicker">✳ A field guide to the zodiac</p>
-            <h1 id="constellations-title">Patterns written in our sky.</h1>
+            <div className="hero-badge-row">
+              <p className="constellation-kicker">
+                <Sparkles size={14} aria-hidden="true" /> A field guide to the celestial sphere
+              </p>
+            </div>
+
+            <h1 id="constellations-title">
+              Patterns written <br />
+              <span className="hero-title-gradient">in our sky.</span>
+            </h1>
+
             <p>
-              From Earth, distant stars appear to draw familiar figures along
-              the Sun’s path. Step closer to see the pattern—and the depth
-              hidden behind it.
+              From Earth, distant stars appear to draw familiar figures along the Sun’s
+              annual path. Step into our astronomical observatory to see the connected
+              patterns—and uncover the vast 3D depths behind them.
             </p>
+
+            {/* Live Observation Advice Widget */}
+            <div className="hero-live-sky-card">
+              <div className="live-sky-header">
+                <Calendar size={14} aria-hidden="true" />
+                <span>Tonight’s Sky · {currentSky.season}</span>
+              </div>
+              <p className="live-sky-tip">{currentSky.tip}</p>
+              <div className="live-sky-tags">
+                {currentSky.featured.map((name) => (
+                  <span key={name} className="live-sky-tag">
+                    ✦ {name}
+                  </span>
+                ))}
+              </div>
+            </div>
+
             <div className="constellation-hero-actions">
               <a href="#sky-map" className="constellation-primary-action">
-                Explore the sky map
-                <ArrowDown size={17} aria-hidden="true" />
+                <Telescope size={17} aria-hidden="true" />
+                Launch the Sky Atlas
+                <ArrowDown size={16} aria-hidden="true" />
               </a>
               <a href="#how-it-works" className="constellation-secondary-action">
                 How constellations work
@@ -89,115 +160,136 @@ export default async function ConstellationsPage({
             </div>
           </div>
 
+          {/* Hero Featured Constellation (Scorpius 3D preview) */}
           <div className="constellation-hero-pattern">
-            <StarPattern constellation={scorpius} decorative />
+            <div className="hero-pattern-halo" aria-hidden="true" />
+            <StarPattern constellation={scorpius} view="pattern" decorative />
             <div className="constellation-hero-pattern-label">
-              <span>Earth view</span>
-              <strong>Scorpius</strong>
+              <div className="pattern-label-header">
+                <span>Earth Projection · IAU Sco</span>
+                <span className="hero-glyph-badge">
+                  <ZodiacGlyph slug={scorpius.slug} size={20} aria-hidden="true" />
+                </span>
+              </div>
+              <strong>{scorpius.name}</strong>
+              <small>{scorpius.meaning} · {scorpius.brightestStar}</small>
             </div>
           </div>
         </section>
 
+        {/* Interactive Observatory Section */}
         <ConstellationExperience
           initialConstellation={initialConstellation ?? "scorpius"}
           initialView={initialView}
         />
 
+        {/* Reading The Sky (Theory) Section */}
         <section
           id="how-it-works"
           className="constellation-theory"
           aria-labelledby="theory-title"
         >
           <div className="constellation-section-heading">
-            <p className="constellation-kicker">02 · Reading the sky</p>
+            <p className="constellation-kicker">
+              <Compass size={13} aria-hidden="true" /> 02 · Astronomical Perception
+            </p>
             <div>
               <h2 id="theory-title">A pattern is a point of view.</h2>
               <p>
-                A constellation is useful sky geography, not a single physical
-                object. Three simple steps reveal what our eyes leave out.
+                A constellation is convenient sky geography, not a single physical
+                cluster. Three steps reveal what our eyes leave out.
               </p>
             </div>
           </div>
 
           <div className="theory-step-grid">
-            <article>
+            <article className="theory-card">
               <span className="theory-step-number">01</span>
               <div className="theory-visual theory-visual-dots" aria-hidden="true">
                 <i /><i /><i /><i /><i /><i />
               </div>
-              <p><Sparkles size={15} aria-hidden="true" /> Look up</p>
+              <p>
+                <Sparkles size={15} aria-hidden="true" /> Look up
+              </p>
               <h3>First, we see points.</h3>
               <span>
-                Brightness, darkness and imagination make some stars stand out
-                from the crowded sky.
+                Brightness, darkness, and human imagination make certain guide stars
+                stand out from the dense field of billions of background lights.
               </span>
             </article>
 
-            <article>
+            <article className="theory-card">
               <span className="theory-step-number">02</span>
               <div className="theory-visual theory-visual-lines" aria-hidden="true">
                 <i /><i /><i /><i /><i />
                 <b /><b /><b /><b />
               </div>
-              <p><Orbit size={15} aria-hidden="true" /> Draw the pattern</p>
+              <p>
+                <Orbit size={15} aria-hidden="true" /> Draw the pattern
+              </p>
               <h3>Then, we connect them.</h3>
               <span>
-                The guide lines are conventions. Different cultures have drawn
-                different figures across the same light.
+                The guide lines are human conventions. Different ancient cultures
+                imagined different mythological figures across the exact same points of light.
               </span>
             </article>
 
-            <article>
+            <article className="theory-card">
               <span className="theory-step-number">03</span>
               <div className="theory-visual theory-visual-depth" aria-hidden="true">
                 <i /><i /><i /><i /><i />
               </div>
-              <p><Layers3 size={15} aria-hidden="true" /> Add the depth</p>
+              <p>
+                <Layers3 size={15} aria-hidden="true" /> Add the depth
+              </p>
               <h3>Space breaks the shape apart.</h3>
               <span>
-                The stars can lie at very different distances. Change your
-                viewpoint and the familiar outline would change too.
+                Stars can sit hundreds of light-years apart in 3D space. Fly to another
+                star system and the familiar outline vanishes completely.
               </span>
             </article>
           </div>
 
           <aside className="projection-note">
-            <CircleDot size={21} aria-hidden="true" />
+            <CircleDot size={22} aria-hidden="true" />
             <div>
-              <strong>The lines do not exist in space.</strong>
+              <strong>The connecting lines do not exist in space.</strong>
               <p>
-                They are a map-reading aid drawn over a three-dimensional field
-                of unrelated or widely separated stars.
+                They are map-reading aids drawn over a three-dimensional field of
+                independent, widely separated stars traveling through the galaxy.
               </p>
             </div>
           </aside>
         </section>
 
+        {/* 12 Signs vs 13 Constellations Comparison */}
         <section className="zodiac-comparison" aria-labelledby="comparison-title">
           <div className="constellation-section-heading constellation-section-heading-light">
-            <p className="constellation-kicker">03 · Two different systems</p>
+            <p className="constellation-kicker">
+              <Sun size={13} aria-hidden="true" /> 03 · Two Different Sky Systems
+            </p>
             <div>
               <h2 id="comparison-title">Twelve signs. Thirteen constellations.</h2>
               <p>
-                The names overlap, but the two systems divide the sky in
-                different ways and answer different questions.
+                While the names overlap, astronomy and astrology divide the sky with
+                fundamentally different methods and purposes.
               </p>
             </div>
           </div>
 
           <div className="zodiac-comparison-grid">
-            <article>
+            <article className="comparison-card-traditional">
               <div className="comparison-card-heading">
                 <span>12</span>
                 <div>
-                  <small>Traditional system</small>
-                  <h3>Zodiac signs</h3>
+                  <small>Astrological Calendar</small>
+                  <h3>Zodiac Signs</h3>
                 </div>
               </div>
               <ul>
-                <li>Twelve equal slices of 30 degrees</li>
-                <li>A symbolic calendar system</li>
-                <li>Uses the twelve familiar zodiac names</li>
+                <li>Twelve equal mathematical segments of 30° each</li>
+                <li>Fixed seasonal calendar based on the equinoxes</li>
+                <li>Uses twelve traditional Babylonian signs</li>
                 <li>Does not include Ophiuchus as a sign</li>
               </ul>
             </article>
@@ -210,96 +302,102 @@ export default async function ConstellationsPage({
               <div className="comparison-card-heading">
                 <span>13</span>
                 <div>
-                  <small>Astronomical sky map</small>
-                  <h3>Ecliptic constellations</h3>
+                  <small>Real Astronomical Sky Map</small>
+                  <h3>Ecliptic Constellations</h3>
                 </div>
               </div>
               <ul>
-                <li>Official sky regions with unequal sizes</li>
-                <li>Defined by observable boundaries</li>
-                <li>The Sun spends unequal time in each region</li>
-                <li>Includes Ophiuchus on the ecliptic</li>
+                <li>Official IAU sky boundaries of unequal physical sizes</li>
+                <li>Defined by actual observed stars and coordinates</li>
+                <li>The Sun spends varying times (44 days in Virgo, only 7 in Scorpius)</li>
+                <li>Includes Ophiuchus (The Serpent Bearer) along the Sun’s path</li>
               </ul>
             </article>
           </div>
 
           <p className="comparison-footnote">
-            The two systems answer different questions; one does not simply
-            replace the other.
+            The two systems answer different questions; astronomical field guides map
+            observable cosmic reality across time and space.
           </p>
         </section>
 
+        {/* FAQ Section */}
         <section className="constellation-faq" aria-labelledby="faq-title">
           <div className="constellation-section-heading">
-            <p className="constellation-kicker">05 · Clear the cosmic fog</p>
+            <p className="constellation-kicker">
+              <ShieldCheck size={13} aria-hidden="true" /> 05 · Frequently Asked Questions
+            </p>
             <div>
-              <h2 id="faq-title">Four useful corrections.</h2>
-              <p>A little context turns a symbolic sky into a scientific map.</p>
+              <h2 id="faq-title">Clearing the cosmic fog.</h2>
+              <p>Essential answers that turn symbolic folklore into clear astronomical understanding.</p>
             </div>
           </div>
 
           <div className="constellation-faq-list">
             <details open>
-              <summary>Are the connecting lines real?</summary>
+              <summary>Are the connecting lines real in outer space?</summary>
               <p>
-                No. They are guide marks people draw to remember and recognize
-                a pattern. The official constellation is a region of sky, not
-                the stick figure itself.
+                No. Connecting lines are purely human wayfinding aids designed to help observers
+                identify landmarks in the night sky. In official astronomy (IAU), a constellation is
+                an entire bordered sector of the celestial sphere.
               </p>
             </details>
             <details>
-              <summary>Are stars in one constellation close together?</summary>
+              <summary>Are stars in a constellation bound to each other?</summary>
               <p>
-                Not necessarily. They can look neighboring from Earth while
-                sitting at very different distances in three-dimensional space.
+                Rarely. While stars may look like close neighbors when viewed from Earth, they
+                typically lie at drastically different distances—often separated by hundreds of
+                light-years in three-dimensional space.
               </p>
             </details>
             <details>
-              <summary>Why does the pattern barely resemble its name?</summary>
+              <summary>Why did the Sun’s position shift over thousands of years?</summary>
               <p>
-                The drawing depends on memory, storytelling and cultural
-                tradition. The stars provide prompts rather than a detailed
-                picture.
+                Earth undergoes axial precession—a slow conical wobble of its rotational axis like a
+                spinning top, completing a cycle every 25,772 years. This shifts the apparent position
+                of equinoxes westward across the constellations.
               </p>
             </details>
             <details>
-              <summary>Does a zodiac constellation determine personality?</summary>
+              <summary>What makes Ophiuchus the 13th ecliptic constellation?</summary>
               <p>
-                This field guide focuses on astronomy: observed positions,
-                named sky regions and the stars seen within them. It does not
-                make astrological personality claims.
+                The ecliptic—the Sun’s apparent annual path across our sky—passes directly through
+                the constellation Ophiuchus between November 29 and December 18, before entering
+                Sagittarius.
               </p>
             </details>
           </div>
         </section>
 
+        {/* Sources & References */}
         <section className="constellation-sources" aria-labelledby="sources-title">
           <div>
-            <p className="constellation-kicker">Sources · checked August 2026</p>
-            <h2 id="sources-title">Built from named skies.</h2>
+            <p className="constellation-kicker">Astronomical Citations</p>
+            <h2 id="sources-title">Verified cosmic data.</h2>
           </div>
           <ul>
             {constellationSources.map((source) => (
               <li key={source.url}>
                 <a href={source.url} target="_blank" rel="noreferrer">
                   {source.label}
-                  <ArrowUpRight size={14} aria-hidden="true" />
+                  <ArrowUpRight size={15} aria-hidden="true" />
                 </a>
               </li>
             ))}
           </ul>
         </section>
 
+        {/* Closing Call to Action */}
         <section className="constellation-closing">
-          <p className="constellation-kicker">The pattern is only the beginning</p>
+          <p className="constellation-kicker">Your journey across the stars continues</p>
           <h2>Choose a field. Follow the light.</h2>
           <div>
             <Link href="/constellation/scorpius" className="constellation-primary-action">
-              Open a constellation
+              Explore Scorpius in Depth
               <ArrowUpRight size={17} aria-hidden="true" />
             </Link>
             <Link href="/explore" className="constellation-secondary-action">
-              Return to the planets
+              Return to Solar System Planets
             </Link>
           </div>
         </section>
