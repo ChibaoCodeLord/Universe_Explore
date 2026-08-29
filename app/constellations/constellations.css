@@ -61,7 +61,7 @@
   margin: 0 auto;
   padding: clamp(3rem, 6vw, 5.5rem) clamp(1.25rem, 4vw, 3.5rem) clamp(4rem, 8vw, 7rem);
   display: grid;
-  grid-template-columns: minmax(0, 1fr) minmax(24rem, 1.15fr);
+  grid-template-columns: minmax(0, 1.15fr) minmax(22rem, 1fr);
   align-items: center;
   gap: clamp(2.5rem, 6vw, 6rem);
 }
@@ -162,7 +162,14 @@
   border: 1px solid rgba(246, 209, 144, 0.3);
 }
 
-.constellation-hero-actions,
+.constellation-hero-actions {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 1rem;
+  margin-top: 2.2rem;
+}
+
 .constellation-closing > div {
   display: flex;
   flex-wrap: wrap;
@@ -174,17 +181,18 @@
 .constellation-primary-action,
 .constellation-secondary-action {
   display: inline-flex;
-  min-height: 52px;
+  min-height: 50px;
   align-items: center;
   justify-content: center;
   gap: 0.65rem;
-  padding: 0.9rem 1.6rem;
+  padding: 0.85rem 1.45rem;
   border-radius: 999px;
-  font-size: 0.74rem;
+  font-size: 0.72rem;
   font-weight: 800;
-  letter-spacing: 0.12em;
+  letter-spacing: 0.1em;
   text-decoration: none;
   text-transform: uppercase;
+  white-space: nowrap;
   transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
@@ -507,9 +515,19 @@
   z-index: 4;
   width: var(--star-size);
   height: var(--star-size);
-  display: block;
+  display: grid;
+  place-items: center;
   cursor: pointer;
   outline: none;
+  touch-action: manipulation;
+}
+
+.star-pattern-point::before {
+  content: "";
+  position: absolute;
+  inset: -14px;
+  border-radius: 50%;
+  pointer-events: auto;
 }
 
 .star-core {
@@ -604,35 +622,36 @@
 /* 3D Depth Tag */
 .star-depth-tag {
   position: absolute;
-  bottom: calc(100% + 6px);
+  bottom: calc(100% + 5px);
   left: 50%;
   transform: translateX(-50%);
-  padding: 0.15rem 0.4rem;
+  padding: 0.12rem 0.38rem;
   border-radius: 999px;
-  background: rgba(232, 169, 76, 0.2);
-  border: 1px solid rgba(246, 209, 144, 0.45);
+  background: rgba(8, 14, 48, 0.85);
+  border: 1px solid rgba(246, 209, 144, 0.5);
   color: var(--gold-light);
-  font-size: 0.58rem;
+  font-size: 0.55rem;
   font-weight: 800;
-  letter-spacing: 0.06em;
+  letter-spacing: 0.05em;
   white-space: nowrap;
   pointer-events: none;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
+  backdrop-filter: blur(8px);
 }
 
 /* Holographic Star Inspector Overlay (Tooltip Card) */
 .star-inspector-overlay {
   position: absolute;
-  z-index: 10;
+  z-index: 20;
   min-width: 13rem;
   padding: 0.85rem 1rem;
   border: 1px solid rgba(255, 255, 255, 0.2);
   border-radius: 1rem;
-  background: rgba(8, 14, 48, 0.9);
-  box-shadow: 0 24px 60px rgba(0, 0, 0, 0.5), 0 0 20px rgba(246, 209, 144, 0.2);
+  background: rgba(8, 14, 48, 0.94);
+  box-shadow: 0 24px 60px rgba(0, 0, 0, 0.6), 0 0 20px rgba(246, 209, 144, 0.25);
   backdrop-filter: blur(20px);
-  transform: translate(-50%, -100%);
   pointer-events: none;
-  animation: inspectorFade 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+  animation: inspectorFade 0.2s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 @keyframes inspectorFade {

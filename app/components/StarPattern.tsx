@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useRef, type CSSProperties, type MouseEvent } from "react";
+import { useState, useMemo, useRef, type CSSProperties, type MouseEvent } from "react";
 import type { Constellation, ConstellationStar, ConstellationView } from "@/lib/constellations";
 import { cosmicAudio } from "@/lib/cosmic-audio";
 import ZodiacGlyph from "./ZodiacGlyph";
@@ -45,13 +45,23 @@ export default function StarPattern({
   const [isHoveringContainer, setIsHoveringContainer] = useState(false);
   const containerRef = useRef<HTMLDivElement>(null);
 
-  const starsById = new Map(
-    constellation.stars.map((star) => [star.id, star]),
+  const starsById = useMemo(
+    () => new Map(constellation.stars.map((star) => [star.id, star])),
+    [constellation]
   );
+
+  // Safely normalize celestial depth on a logarithmic scale across all constellations
+  const { minLogDist, maxLogDist } = useMemo(() => {
+    const logs = constellation.stars
+      .map((s) => Math.log(Math.max(10, s.distanceLy || 100)));
+    const min = Math.min(...logs);
+    const max = Math.max(...logs);
+    return { minLogDist: min, maxLogDist: max === min ? min + 1 : max };
+  }, [constellation]);
 
   const summary = `${constellation.name} is shown as ${constellation.stars.length} guide stars. ${constellation.brightestStar} is highlighted as the brightest anchor star.`;
 
-  // Interactive 3D Parallax Mouse movement
+  // Interactive 3D Parallax Mouse movement (smooth, clamped angles)
   const handleMouseMove = (e: MouseEvent<HTMLDivElement>) => {
     if (decorative || compact || !containerRef.current) return;
     const rect = containerRef.current.getBoundingClientRect();
@@ -60,13 +70,13 @@ export default function StarPattern({
 
     if (view === "depth") {
       setRotate3D({
-        x: -ny * 48,
-        y: nx * 56,
+        x: -ny * 20,
+        y: nx * 24,
       });
     } else {
       setRotate3D({
-        x: -ny * 14,
-        y: nx * 14,
+        x: -ny * 7,
+        y: nx * 7,
       });
     }
   };
@@ -192,7 +202,11 @@ export default function StarPattern({
         {constellation.stars.map((star) => {
           const sz = starSize(star.magnitude, compact);
           const spectralColor = getSpectralColor(star.spectralType);
-          const depthZ = view === "depth" ? (star.z ?? 1) * 160 - 160 : 0;
+          
+          // Compute normalized depth in safe perspective bounds (-36px to +36px)
+          const logDist = Math.log(Math.max(10, star.distanceLy || 100));
+          const normDist = (logDist - minLogDist) / (maxLogDist - minLogDist);
+          const depthZ = view === "depth" ? (0.5 - normDist) * 72 : 0;
           const isSelected = hoveredStar?.id === star.id;
 
           return (
@@ -229,7 +243,7 @@ export default function StarPattern({
               )}
 
               {/* 3D Depth Distance Tag */}
-              {view === "depth" && !compact && star.distanceLy && (
+              {view === "depth" && !compact && !decorative && star.distanceLy && (
                 <span className="star-depth-tag">
                   {star.distanceLy} ly
                 </span>
@@ -240,12 +254,13 @@ export default function StarPattern({
       </div>
 
       {/* Holographic Star Details Inspector Card (Floating Tooltip) */}
-      {!compact && hoveredStar && (
+      {!compact && !decorative && hoveredStar && (
         <div
           className="star-inspector-overlay"
           style={{
-            left: `${Math.min(78, Math.max(22, hoveredStar.x))}%`,
-            top: `${Math.min(75, Math.max(25, hoveredStar.y + 12))}%`,
+            left: `${Math.min(76, Math.max(24, hoveredStar.x))}%`,
+            top: `${hoveredStar.y > 60 ? hoveredStar.y - 12 : hoveredStar.y + 14}%`,
+            transform: hoveredStar.y > 60 ? "translate(-50%, -100%)" : "translate(-50%, 0)",
           }}
           aria-live="polite"
         >
