@@ -998,6 +998,13 @@
   box-shadow: 0 4px 18px rgba(246, 209, 144, 0.4);
 }
 
+/* Keep the map caption in its own visual row above the floating controls. */
+.constellation-stage-card > .star-pattern .star-pattern-caption {
+  bottom: 4.25rem;
+  padding-inline: 1rem;
+  pointer-events: none;
+}
+
 /* Zodiac Ecliptic Ribbon */
 .constellation-rail {
   display: flex;
@@ -2490,6 +2497,39 @@
 
   .constellation-stage-topline .ecliptic-transit-pill {
     display: none;
+  }
+
+  .constellation-stage-card > .star-pattern {
+    width: min(82vw, 25rem);
+    transform: translateY(-1.75rem);
+  }
+
+  .constellation-stage-card > .star-pattern .star-pattern-caption {
+    bottom: -0.5rem;
+    flex-wrap: wrap;
+    row-gap: 0.35rem;
+    padding-inline: 0.5rem;
+    font-size: 0.54rem;
+    line-height: 1.4;
+    text-align: center;
+  }
+
+  .constellation-view-switcher {
+    left: 0.75rem;
+    right: 0.75rem;
+    bottom: 0.75rem;
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    border-radius: 1.5rem;
+    transform: none;
+  }
+
+  .constellation-view-switcher button {
+    min-width: 0;
+    padding: 0.6rem 0.4rem;
+    font-size: 0.62rem;
+    line-height: 1.25;
+    text-align: center;
   }
 
   .constellation-info-card {
