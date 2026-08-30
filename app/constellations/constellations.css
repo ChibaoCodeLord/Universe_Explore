@@ -865,7 +865,7 @@
 /* Observatory Grid */
 .constellation-observatory {
   display: grid;
-  grid-template-columns: minmax(0, 1.05fr) minmax(320px, 390px);
+  grid-template-columns: minmax(0, 1fr) minmax(430px, 500px);
   align-items: start;
   gap: clamp(1.2rem, 3vw, 2.4rem);
 }
@@ -1080,88 +1080,76 @@
   overflow: hidden;
   display: flex;
   flex-direction: column;
-  padding: 1.8rem;
-  border: 1px solid rgba(255, 255, 255, 0.16);
-  border-radius: 2.5rem;
-  background:
-    linear-gradient(155deg, color-mix(in srgb, var(--constellation-accent) 18%, transparent), transparent 45%),
-    rgba(8, 14, 52, 0.88);
-  box-shadow: 0 35px 90px rgba(0, 0, 0, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.1);
+  padding: clamp(1.8rem, 2.4vw, 2.6rem);
+  border: 1px solid rgba(152, 162, 196, 0.22);
+  border-radius: 2.25rem;
+  background: rgba(5, 9, 27, 0.94);
+  box-shadow: 0 28px 80px rgba(0, 0, 0, 0.34), inset 0 1px 0 rgba(255, 255, 255, 0.04);
   backdrop-filter: blur(24px);
-}
-
-.info-card-watermark {
-  position: absolute;
-  right: -2rem;
-  top: -2rem;
-  color: var(--constellation-accent);
-  opacity: 0.08;
-  pointer-events: none;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.info-card-watermark .zodiac-svg-glyph {
-  width: 180px;
-  height: 180px;
 }
 
 .constellation-info-header {
   position: relative;
   z-index: 1;
+}
+
+.constellation-info-meta-row {
   display: flex;
-  align-items: flex-start;
+  align-items: center;
   gap: 1rem;
 }
 
 .constellation-info-mark {
-  width: 4.4rem;
-  aspect-ratio: 1.1;
+  flex: 0 0 auto;
+  width: 4rem;
+  aspect-ratio: 1;
   display: grid;
   place-items: center;
-  color: var(--constellation-accent);
-  border: 1px dashed color-mix(in srgb, var(--constellation-accent) 60%, transparent);
-  border-radius: 48% 52% 44% 56% / 53% 44% 56% 47%;
-  background: color-mix(in srgb, var(--constellation-accent) 12%, transparent);
-  font-size: 0.62rem;
-  font-weight: 800;
+  color: #b897ff;
+  border: 1px dashed rgba(184, 151, 255, 0.32);
+  border-radius: 50%;
+  background: transparent;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+  font-size: 0.76rem;
+  font-weight: 700;
   letter-spacing: 0.16em;
   text-transform: uppercase;
 }
 
 .constellation-info-index {
-  color: var(--constellation-accent);
-  font-size: 0.65rem;
-  font-weight: 800;
-  letter-spacing: 0.18em;
+  color: #b897ff;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.16em;
   text-transform: uppercase;
 }
 
 .constellation-info-header h3 {
-  margin-top: 0.2rem;
-  font-family: var(--font-heading);
-  font-size: clamp(2.6rem, 4.2vw, 3.8rem);
+  margin-top: 1.7rem;
+  font-family: Georgia, "Times New Roman", serif;
+  font-size: clamp(3rem, 4vw, 4.75rem);
   font-weight: 400;
-  letter-spacing: -0.025em;
-  line-height: 0.9;
+  letter-spacing: -0.055em;
+  line-height: 0.92;
 }
 
 .constellation-info-meaning {
-  margin-top: 0.4rem;
-  color: rgba(251, 247, 236, 0.6);
-  font-size: 0.72rem;
-  font-weight: 700;
-  letter-spacing: 0.1em;
+  margin-top: 0.9rem;
+  color: rgba(176, 184, 218, 0.58);
+  font-size: 0.82rem;
+  font-weight: 600;
+  letter-spacing: 0.08em;
   text-transform: uppercase;
 }
 
-/* Tag Badges */
+/* Plain metadata row */
 .constellation-tag-row {
   display: flex;
   flex-wrap: wrap;
-  gap: 0.45rem;
-  margin-top: 1.2rem;
+  align-items: center;
+  gap: 0.8rem;
+  margin-top: 1.8rem;
   position: relative;
   z-index: 1;
 }
@@ -1172,76 +1160,78 @@
 .traditional-badge {
   display: inline-flex;
   align-items: center;
-  gap: 0.35rem;
-  padding: 0.35rem 0.65rem;
-  border-radius: 999px;
-  font-size: 0.62rem;
-  font-weight: 800;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
+  gap: 0;
+  padding: 0;
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+  color: rgba(192, 199, 225, 0.78);
+  font-size: 0.8rem;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+  text-transform: none;
 }
 
-.element-badge {
-  background: rgba(255, 255, 255, 0.07);
-  border: 1px solid rgba(255, 255, 255, 0.15);
-  color: var(--cream);
+.constellation-tag-row > span:not(:last-child)::after {
+  content: "·";
+  margin-left: 0.8rem;
+  color: rgba(192, 199, 225, 0.42);
+}
+
+.element-badge svg {
+  display: none;
 }
 
 .element-fire { color: #ef9a78; }
 .element-earth { color: #8fb6b0; }
 .element-air { color: #9ecde0; }
 .element-water { color: #b7a6dd; }
-.element-celestial { color: #f6d190; }
+.element-celestial { color: rgba(192, 199, 225, 0.78); }
 
-.season-badge {
-  background: rgba(246, 209, 144, 0.12);
-  border: 1px solid rgba(246, 209, 144, 0.3);
-  color: var(--gold-light);
-}
-
-.ecliptic-badge {
-  background: color-mix(in srgb, var(--constellation-accent) 15%, transparent);
-  border: 1px solid color-mix(in srgb, var(--constellation-accent) 45%, transparent);
-  color: var(--constellation-accent);
-}
-
+.ecliptic-badge,
 .traditional-badge {
-  background: rgba(255, 255, 255, 0.05);
-  border: 1px solid rgba(255, 255, 255, 0.12);
-  color: rgba(251, 247, 236, 0.7);
+  color: #b897ff;
 }
 
 /* Quick Facts Grid */
 .constellation-quick-facts {
   display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: 0.6rem;
-  margin-top: 1.4rem;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 0;
+  margin-top: 1.8rem;
+  border-top: 1px solid rgba(152, 162, 196, 0.2);
+  border-bottom: 1px solid rgba(152, 162, 196, 0.2);
   position: relative;
   z-index: 1;
 }
 
 .constellation-quick-facts div {
-  padding: 0.85rem;
-  border-radius: 1.1rem;
-  background: rgba(5, 10, 36, 0.75);
-  border: 1px solid rgba(255, 255, 255, 0.1);
+  min-width: 0;
+  padding: 1.2rem 0.9rem;
+  background: transparent;
+}
+
+.constellation-quick-facts div + div {
+  border-left: 1px solid rgba(152, 162, 196, 0.2);
 }
 
 .constellation-quick-facts dt {
-  color: rgba(251, 247, 236, 0.45);
+  color: rgba(153, 162, 201, 0.68);
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
   font-size: 0.58rem;
-  font-weight: 800;
-  letter-spacing: 0.1em;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  line-height: 1.35;
   text-transform: uppercase;
 }
 
 .constellation-quick-facts dd {
-  margin: 0.45rem 0 0;
-  color: var(--cream);
-  font-size: 0.84rem;
+  margin: 0.65rem 0 0;
+  color: rgba(251, 247, 236, 0.96);
+  font-size: 1rem;
   font-weight: 700;
-  line-height: 1.25;
+  line-height: 1.3;
+  overflow-wrap: anywhere;
 }
 
 .fact-highlight {
@@ -1251,55 +1241,65 @@
 /* Info Tabs */
 .info-tab-selector {
   display: flex;
-  gap: 0.35rem;
-  margin-top: 1.4rem;
-  padding: 0.25rem;
-  border-radius: 999px;
-  background: rgba(4, 8, 28, 0.8);
-  border: 1px solid rgba(255, 255, 255, 0.1);
+  gap: clamp(1.2rem, 3vw, 2.2rem);
+  margin-top: 1.6rem;
+  padding: 0;
+  border-bottom: 1px solid rgba(152, 162, 196, 0.2);
   position: relative;
   z-index: 1;
 }
 
 .info-tab-selector button {
-  flex: 1;
-  min-height: 34px;
+  position: relative;
+  flex: 0 0 auto;
+  min-height: 46px;
+  padding: 0 0 0.9rem;
   border: 0;
-  border-radius: 999px;
+  border-radius: 0;
   background: transparent;
-  color: rgba(251, 247, 236, 0.6);
+  color: rgba(153, 162, 201, 0.68);
   font: inherit;
-  font-size: 0.65rem;
-  font-weight: 800;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
+  font-size: 0.86rem;
+  font-weight: 600;
+  letter-spacing: -0.02em;
+  text-transform: none;
   cursor: pointer;
-  transition: all 0.2s ease;
+  transition: color 0.2s ease;
 }
 
 .info-tab-selector button.is-active {
-  color: var(--navy-950);
-  background: var(--gold-light);
-  box-shadow: 0 2px 10px rgba(246, 209, 144, 0.3);
+  color: #ffffff;
+  background: transparent;
+  box-shadow: none;
+}
+
+.info-tab-selector button.is-active::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: -1px;
+  height: 2px;
+  background: #e8b55f;
 }
 
 .info-tab-content {
-  margin-top: 1rem;
-  min-height: 5.5rem;
+  margin-top: 1.35rem;
+  min-height: 8.5rem;
   position: relative;
   z-index: 1;
 }
 
 .constellation-info-description {
-  color: rgba(251, 247, 236, 0.78);
-  font-size: 0.92rem;
-  line-height: 1.65;
+  color: rgba(197, 204, 229, 0.82);
+  font-size: 1rem;
+  line-height: 1.7;
 }
 
 .constellation-guide-box p {
-  color: rgba(251, 247, 236, 0.8);
-  font-size: 0.86rem;
-  line-height: 1.6;
+  color: rgba(197, 204, 229, 0.82);
+  font-size: 0.94rem;
+  line-height: 1.65;
 }
 
 .constellation-guide-box .sub-note {
@@ -1310,8 +1310,8 @@
 
 .constellation-mini-starlist {
   display: grid;
-  gap: 0.4rem;
-  max-height: 7rem;
+  gap: 0;
+  max-height: 9rem;
   overflow-y: auto;
   padding-right: 0.3rem;
 }
@@ -1320,16 +1320,17 @@
   display: flex;
   align-items: center;
   gap: 0.6rem;
-  padding: 0.35rem 0.6rem;
-  border-radius: 0.6rem;
-  background: rgba(255, 255, 255, 0.04);
+  padding: 0.55rem 0.2rem;
+  border-bottom: 1px solid rgba(152, 162, 196, 0.12);
+  border-radius: 0;
+  background: transparent;
   cursor: pointer;
   transition: background 0.2s ease;
 }
 
 .mini-star-item:hover,
 .mini-star-item.is-selected {
-  background: rgba(255, 255, 255, 0.12);
+  background: rgba(184, 151, 255, 0.08);
 }
 
 .mini-star-dot {
@@ -1361,17 +1362,17 @@
 /* Info Card Bottom Action Controls */
 .constellation-info-actions {
   display: grid;
-  grid-template-columns: 46px 1fr 46px;
-  gap: 0.6rem;
+  grid-template-columns: 50px 1fr 50px;
+  gap: 0.9rem;
   margin-top: auto;
-  padding-top: 1.4rem;
+  padding-top: 1.8rem;
   position: relative;
   z-index: 1;
 }
 
 .step-btn,
 .explore-field-btn {
-  min-height: 46px;
+  min-height: 50px;
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -1383,8 +1384,8 @@
 }
 
 .step-btn {
-  color: var(--cream);
-  background: rgba(255, 255, 255, 0.06);
+  color: rgba(197, 204, 229, 0.85);
+  background: transparent;
 }
 
 .step-btn:hover,
@@ -1398,12 +1399,12 @@
   gap: 0.5rem;
   padding: 0 1rem;
   color: var(--navy-950);
-  background: linear-gradient(135deg, #f6d190, #e8a94c);
-  font-size: 0.72rem;
+  background: #e8b55f;
+  font-size: 0.8rem;
   font-weight: 800;
-  letter-spacing: 0.1em;
+  letter-spacing: -0.01em;
   text-decoration: none;
-  text-transform: uppercase;
+  text-transform: none;
   box-shadow: 0 8px 24px rgba(232, 169, 76, 0.3);
 }
 
@@ -2535,6 +2536,53 @@
   .constellation-info-card {
     border-radius: 1.8rem;
     padding: 1.4rem;
+  }
+
+  .constellation-info-mark {
+    width: 3.4rem;
+  }
+
+  .constellation-info-index {
+    font-size: 0.62rem;
+  }
+
+  .constellation-info-header h3 {
+    margin-top: 1.35rem;
+    font-size: clamp(3rem, 15vw, 4.2rem);
+  }
+
+  .constellation-tag-row {
+    gap: 0.55rem;
+  }
+
+  .constellation-tag-row > span:not(:last-child)::after {
+    margin-left: 0.55rem;
+  }
+
+  .constellation-quick-facts {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .constellation-quick-facts div:nth-child(3) {
+    border-left: 0;
+  }
+
+  .constellation-quick-facts div:nth-child(-n + 2) {
+    border-bottom: 1px solid rgba(152, 162, 196, 0.2);
+  }
+
+  .info-tab-selector {
+    justify-content: space-between;
+    gap: 0.6rem;
+  }
+
+  .info-tab-selector button {
+    font-size: 0.76rem;
+  }
+
+  .constellation-info-actions {
+    grid-template-columns: 44px minmax(0, 1fr) 44px;
+    gap: 0.6rem;
   }
 
   .constellation-card-grid {

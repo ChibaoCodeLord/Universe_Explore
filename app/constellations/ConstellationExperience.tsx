@@ -366,25 +366,19 @@ export default function ConstellationExperience({
               { "--constellation-accent": selectedConstellation.accent } as React.CSSProperties
             }
           >
-            {/* Ambient Watermark Glyph */}
-            <span className="info-card-watermark" aria-hidden="true">
-              <ZodiacGlyph slug={selectedConstellation.slug} size={180} />
-            </span>
-
             <div className="constellation-info-header">
-              <div className="constellation-info-mark" aria-hidden="true">
-                <i />
-                <span>{selectedConstellation.iauAbbreviation}</span>
-              </div>
-              <div>
+              <div className="constellation-info-meta-row">
+                <div className="constellation-info-mark" aria-hidden="true">
+                  <span>{selectedConstellation.iauAbbreviation}</span>
+                </div>
                 <p className="constellation-info-index">
                   Ecliptic Sector {String(selectedConstellation.orderAlongEcliptic).padStart(2, "0")}
                 </p>
-                <h3>{selectedConstellation.name}</h3>
-                <p className="constellation-info-meaning">
-                  {selectedConstellation.meaning} · {selectedConstellation.vietnameseName}
-                </p>
               </div>
+              <h3>{selectedConstellation.name}</h3>
+              <p className="constellation-info-meaning">
+                {selectedConstellation.meaning} · {selectedConstellation.vietnameseName}
+              </p>
             </div>
 
             <div className="constellation-tag-row">
@@ -418,7 +412,7 @@ export default function ConstellationExperience({
               </div>
               <div>
                 <dt>Distance Span</dt>
-                <dd>{selectedConstellation.distanceRange}</dd>
+                <dd>{selectedConstellation.distanceRange.replace(" – ", "–").replace(" light-years", " ly")}</dd>
               </div>
             </dl>
 
@@ -501,7 +495,7 @@ export default function ConstellationExperience({
                 href={`/constellation/${selectedConstellation.slug}`}
                 className="explore-field-btn"
               >
-                Open full field guide
+                Open Full Field Guide
                 <ArrowUpRight size={16} aria-hidden="true" />
               </Link>
               <button
