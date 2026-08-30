@@ -181,7 +181,7 @@ export default async function ConstellationsPage({
         <ConstellationExperience
           initialConstellation={initialConstellation ?? "scorpius"}
           initialView={initialView}
-        />
+        >
 
         {/* Reading The Sky (Theory) Section */}
         <section
@@ -320,6 +320,7 @@ export default async function ConstellationsPage({
             observable cosmic reality across time and space.
           </p>
         </section>
+        </ConstellationExperience>
 
         {/* FAQ Section */}
         <section className="constellation-faq" aria-labelledby="faq-title">

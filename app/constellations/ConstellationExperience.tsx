@@ -35,6 +35,7 @@ import { cosmicAudio } from "@/lib/cosmic-audio";
 type ConstellationExperienceProps = {
   initialConstellation: string;
   initialView: ConstellationView;
+  children?: React.ReactNode;
 };
 
 type FilterCategory = "all" | "spring" | "summer" | "autumn" | "winter" | "traditional" | "ophiuchus";
@@ -50,6 +51,7 @@ const ELEMENT_ICONS: Record<string, React.ReactNode> = {
 export default function ConstellationExperience({
   initialConstellation,
   initialView,
+  children,
 }: ConstellationExperienceProps) {
   const [selectedSlug, setSelectedSlug] = useState(initialConstellation);
   const [view, setView] = useState<ConstellationView>(initialView);
@@ -514,6 +516,8 @@ export default function ConstellationExperience({
           </aside>
         </div>
       </section>
+
+      {children}
 
       {/* Constellation Gallery */}
       <section className="constellation-gallery" aria-labelledby="zodiac-field-title">
