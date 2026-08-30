@@ -30,7 +30,7 @@ export default async function ExplorePage({ searchParams }: ExplorePageProps) {
   return (
     <div className="explore-page">
       <div className="explore-sky" aria-hidden="true" />
-      <SiteHeader active="explore" hardNavigation />
+      <SiteHeader active="explore" />
       <ExploreExperience
         initialView={requestedView === "orbit" ? "orbit" : "gallery"}
         initialPlanet={initialPlanet ?? "earth"}

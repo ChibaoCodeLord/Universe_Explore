@@ -1,9 +1,8 @@
-import Link from "next/link";
+/* eslint-disable @next/next/no-html-link-for-pages */
 import Image from "next/image";
 
 type SiteHeaderProps = {
   active?: "home" | "explore" | "constellations";
-  hardNavigation?: boolean;
 };
 
 const navItems = [
@@ -28,42 +27,23 @@ function Brand() {
   );
 }
 
-export default function SiteHeader({ active, hardNavigation = false }: SiteHeaderProps) {
+export default function SiteHeader({ active }: SiteHeaderProps) {
   return (
     <header className="site-shell-header">
-      {hardNavigation ? (
-        // Intentional full-document navigation: release the active WebGL context
-        // before loading another route from a planet detail page.
-        // eslint-disable-next-line @next/next/no-html-link-for-pages
-        <a href="/" className="site-shell-brand" aria-label="Universe home">
-          <Brand />
-        </a>
-      ) : (
-        <Link href="/" className="site-shell-brand" aria-label="Universe home">
-          <Brand />
-        </Link>
-      )}
+      <a href="/" className="site-shell-brand" aria-label="Universe home">
+        <Brand />
+      </a>
 
       <nav aria-label="Primary navigation">
-        {navItems.map((item) =>
-          hardNavigation ? (
-            <a
-              key={item.href}
-              href={item.href}
-              aria-current={active === item.active ? "page" : undefined}
-            >
-              {item.label}
-            </a>
-          ) : (
-            <Link
-              key={item.href}
-              href={item.href}
-              aria-current={active === item.active ? "page" : undefined}
-            >
-              {item.label}
-            </Link>
-          ),
-        )}
+        {navItems.map((item) => (
+          <a
+            key={item.href}
+            href={item.href}
+            aria-current={active === item.active ? "page" : undefined}
+          >
+            {item.label}
+          </a>
+        ))}
       </nav>
     </header>
   );

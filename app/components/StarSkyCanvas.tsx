@@ -70,6 +70,9 @@ export default function StarSkyCanvas({
     let animId: number;
     let width = (canvas.width = window.innerWidth);
     let height = (canvas.height = window.innerHeight);
+    let lastFrameTime = Number.NEGATIVE_INFINITY;
+    let documentVisible = !document.hidden;
+    const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)");
 
     const handleResize = () => {
       if (!canvas) return;
@@ -78,13 +81,21 @@ export default function StarSkyCanvas({
       initStars();
     };
 
-    window.addEventListener("resize", handleResize);
+    const handleVisibilityChange = () => {
+      documentVisible = !document.hidden;
+      lastFrameTime = Number.NEGATIVE_INFINITY;
+    };
 
-    const starCount = density === "dense" ? Math.floor((width * height) / 4500) : Math.floor((width * height) / 7500);
+    window.addEventListener("resize", handleResize);
+    document.addEventListener("visibilitychange", handleVisibilityChange);
+
     const stars: Star[] = [];
 
     const initStars = () => {
       stars.length = 0;
+      const starCount = density === "dense"
+        ? Math.floor((width * height) / 4500)
+        : Math.floor((width * height) / 7500);
       for (let i = 0; i < starCount; i++) {
         const isBright = Math.random() < 0.12;
         const color = isBright
@@ -149,7 +160,17 @@ export default function StarSkyCanvas({
 
     window.addEventListener("mousemove", handleMouseMove, { passive: true });
 
-    const render = () => {
+    const render = (frameTime = 0) => {
+      animId = requestAnimationFrame(render);
+
+      if (!documentVisible) return;
+
+      const frameInterval = reduceMotion.matches
+        ? Number.POSITIVE_INFINITY
+        : 1000 / 30;
+      if (frameTime - lastFrameTime < frameInterval) return;
+      lastFrameTime = frameTime;
+
       ctx.clearRect(0, 0, width, height);
 
       // 1. Draw Subtle Nebula Glows
@@ -283,7 +304,6 @@ export default function StarSkyCanvas({
         ctx.restore();
       }
 
-      animId = requestAnimationFrame(render);
     };
 
     render();
@@ -292,6 +312,7 @@ export default function StarSkyCanvas({
       cancelAnimationFrame(animId);
       window.removeEventListener("resize", handleResize);
       window.removeEventListener("mousemove", handleMouseMove);
+      document.removeEventListener("visibilitychange", handleVisibilityChange);
     };
   }, [density]);
 

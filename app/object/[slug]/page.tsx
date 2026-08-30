@@ -76,7 +76,7 @@ export default async function ObjectDetailPage({ params }: ObjectDetailPageProps
     >
       <div className="absolute inset-0 bg-black/30 pointer-events-none"></div>
       
-      <SiteHeader active="explore" hardNavigation />
+      <SiteHeader active="explore" />
 
       <div className="pt-12 pb-12 px-6 max-w-6xl mx-auto relative z-10">
         <a
