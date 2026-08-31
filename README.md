@@ -35,3 +35,15 @@ The easiest way to deploy your Next.js app is to use the [Vercel Platform](https
 
 Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
 # Universe_Explore
+
+## Experiences
+
+- `/` — immersive introduction to the Universe collection
+- `/explore` — planet gallery and interactive solar-system orbit map
+- `/object/[slug]` — detailed 2D/3D planet field guide
+- `/constellations` — interactive zodiac sky atlas and astronomy theory
+- `/constellation/[slug]` — field guide for each of the 13 constellations crossed by the ecliptic
+
+Constellation content uses simplified guide-star drawings for learning rather
+than scientific boundary charts or live sky simulation. Source links and the
+date checked are included on the constellation pages.
