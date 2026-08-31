@@ -27,7 +27,7 @@ export async function generateMetadata(): Promise<Metadata> {
   const origin = `${protocol}://${host}`;
   const title = "Universe — An Interactive Cosmic Field Guide";
   const description =
-    "Cross the solar system through a handcrafted gallery, interactive orbit map, and detailed 3D worlds.";
+    "Cross the solar system, explore detailed 3D worlds, and learn how distant stars become the constellations in our sky.";
   const socialImage = new URL("/og.png", origin).toString();
 
   return {

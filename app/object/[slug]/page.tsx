@@ -2,7 +2,6 @@ import { planets } from "@/lib/data";
 import { notFound } from "next/navigation";
 import { headers } from "next/headers";
 import type { Metadata } from "next";
-import Link from "next/link";
 import { ChevronLeft } from "lucide-react";
 import LazyVisualColumn from "@/app/components/LazyVisualColumn";
 import SiteHeader from "@/app/components/SiteHeader";
@@ -80,13 +79,13 @@ export default async function ObjectDetailPage({ params }: ObjectDetailPageProps
       <SiteHeader active="explore" />
 
       <div className="pt-12 pb-12 px-6 max-w-6xl mx-auto relative z-10">
-        <Link
-          href="/explore" 
+        <a
+          href="/explore"
           className="inline-flex items-center text-[var(--gold-light)] hover:text-[var(--gold)] transition-colors font-semibold tracking-wider text-sm mb-8"
         >
           <ChevronLeft className="w-4 h-4 mr-1" />
           BACK TO EXPLORE
-        </Link>
+        </a>
 
         <div className="flex flex-col lg:flex-row gap-12 items-start">
           {/* Visual Column */}
